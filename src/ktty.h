@@ -2,6 +2,9 @@
 #define KERNEL_KTTY_H
 
 
+#include "arch/ktty.h"
+
+
 /**
  * The number of lines in the terminal
  */
@@ -14,7 +17,7 @@
 
 
 /**
- * Print string to the terminal, can include ANSI escape codes
+ * Print string to the terminal, may include ANSI escape codes
  * 
  * @param  str  The string to print
  */
@@ -22,3 +25,4 @@ void kputs(const char* str);
 
 
 #endif
+

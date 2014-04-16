@@ -27,28 +27,26 @@ C_FLAGS = $(OPTIMISE) $(WARN) -m$(MACHINE) -std=$(STD) -nostdlib -nodefaultlibs 
           -fstrict-overflow -fno-builtin
 
 
+NORMALS = ktty arch/ktty
+OBJECTS = arch/kernel kernel $(NORMALS)
+HEADERS = $(NORMALS)
 
-OBJ = kernel_asm kernel_c ktty
 
 
 .PHONY: all
 all: bin/kernel
 
 
-bin/kernel: link.ld $(foreach O,$(OBJ),obj/$(O).o) # link.ld must be first
-	@mkdir -p bin
+bin/kernel: link.ld $(foreach O,$(OBJECTS),obj/$(O).o) # link.ld must be first
+	mkdir -p bin/$(shell echo $@ | cut -d / -f 1 --complement | xargs dirname)
 	ld $(LD_FLAGS) -o $@ -T $^
 
-obj/kernel_asm.o: src/kernel.asm
-	@mkdir -p obj
+obj/arch/kernel.o: src/arch/kernel.asm
+	mkdir -p obj/$(shell echo $@ | cut -d / -f 1 --complement | xargs dirname)
 	nasm $(ASM_FLAGS) -o $@ $<
 
-obj/kernel_c.o: src/kernel.c src/ktty.h
-	@mkdir -p obj
-	gcc $(C_FLAGS) $(CPP_FLAGS) -c -o $@ $<
-
-obj/%.o: src/%.c src/%.h
-	@mkdir -p obj
+obj/%.o: src/%.c $(foreach H,$(HEADERS),src/$(H).h)
+	mkdir -p obj/$(shell echo $@ | cut -d / -f 1 --complement | xargs dirname)
 	gcc $(C_FLAGS) $(CPP_FLAGS) -c -o $@ $<
 
 

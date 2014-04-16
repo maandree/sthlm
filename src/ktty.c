@@ -122,20 +122,18 @@ static void set_colour(int entry)
 }
 
 
-
 /**
- * Print string to the terminal, can include ANSI escape codes
+ * Print string to the terminal, may include ANSI escape codes
  * 
  * @param  str  The string to print
  */
 void kputs(const char* str)
 {
-  char* vidptr = (char*)VIDEO_MEMORY;
-  char symbol;
-  
   static int esc = 0;
   static char esc_buf[ESCAPE_SEQUENCE_LIMIT];
   static long esc_ptr = 0;
+  
+  char symbol;
   
   for (; ((symbol = *str)); str++)
     if (esc == 1)
@@ -163,10 +161,7 @@ void kputs(const char* str)
 		      long int j = entry == 2 ? 0 : cursor_y * KTTY_COLUMNS + cursor_x;
 		      
 		      for (; j < KTTY_COLUMNS * KTTY_LINES; j++)
-			{
-			  *(vidptr + 2 * j + 0) = ' ';
-			  *(vidptr + 2 * j + 1) = (char)colour;
-			}
+			kputc(' ', (char)colour, 0 /* set by x */, j);
 		    }
 		    break;
 		    
@@ -176,10 +171,7 @@ void kputs(const char* str)
 		      long int j = (entry == 2 ? 0 : cursor_x) + cursor_y * KTTY_COLUMNS;
 		      
 		      for (; j < (cursor_y + 1) * KTTY_COLUMNS; j++)
-			{
-			  *(vidptr + 2 * j + 0) = ' ';
-			  *(vidptr + 2 * j + 1) = (char)colour;
-			}
+			kputc(' ', (char)colour, 0 /* set by x */, j);
 		    }
 		    break;
 		    
@@ -231,23 +223,18 @@ void kputs(const char* str)
 	  }
 	if (cursor_y == KTTY_LINES)
 	  {
+	    long int i = KTTY_COLUMNS * (KTTY_LINES - 1);
 	    /* Too far down, lets scroll the text one line up. */
-	    long int i;
-	    for (i = 0; i < 2 * KTTY_COLUMNS * (KTTY_LINES - 1); i++)
-	      *(vidptr + i) = *(vidptr + i + 2 * KTTY_COLUMNS);
+	    kttymove(0, 0, 1, 0, KTTY_COLUMNS);
 	    cursor_y--;
 	    /* Clear the last line. */
-	    for (; i <  2 * KTTY_COLUMNS * KTTY_LINES; i += 2)
-	      {
-		*(vidptr + i + 0) = ' ';
-		*(vidptr + i + 1) = (char)colour;
-	      }
+	    for (; i < KTTY_COLUMNS * KTTY_LINES; i++)
+	      kputc(' ', (char)colour, 0 /* set by x */, i);
 	  }
 	if (symbol != '\n')
 	  {
 	    /* Print the symbol, unless new line. */
-	    *(vidptr + (cursor_y * KTTY_COLUMNS + cursor_x) * 2 + 0) = symbol;
-	    *(vidptr + (cursor_y * KTTY_COLUMNS + cursor_x) * 2 + 1) = (char)colour;
+	    kputc(symbol, (char)colour, cursor_y, cursor_x);
 	    /* Move the cursor one step, line overlow is checked at next print. */
 	    cursor_x++;
 	  }
