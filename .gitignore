@@ -8,4 +8,8 @@ obj/
 *.swo
 *.swp
 *.bak
+*.o
+*.gch
+*.su
+*.out
 
