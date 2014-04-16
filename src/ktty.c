@@ -138,11 +138,24 @@ void kputs(const char* str)
 		    break;
 		    
 		  case 'J':
-		    /* Clear everything or everything after the cursor. */
+		    /* Clear everything or everything after the cursor, on the display. */
 		    {
 		      long int j = entry == 2 ? 0 : cursor_y * KTTY_COLUMNS + cursor_x;
 		      
 		      for (; j < KTTY_COLUMNS * KTTY_LINES; j++)
+			{
+			  *(vidptr + 2 * j + 0) = ' ';
+			  *(vidptr + 2 * j + 1) = (char)colour;
+			}
+		    }
+		    break;
+		    
+		  case 'K':
+		    /* Clear everything, or everything after the cursor, on the line. */
+		    {
+		      long int j = (entry == 2 ? 0 : cursor_x) + cursor_y * KTTY_COLUMNS;
+		      
+		      for (; j < (cursor_y + 1) * KTTY_COLUMNS; j++)
 			{
 			  *(vidptr + 2 * j + 0) = ' ';
 			  *(vidptr + 2 * j + 1) = (char)colour;
