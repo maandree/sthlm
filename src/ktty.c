@@ -41,7 +41,7 @@ void kputs(const char* str)
   static char esc_buf[ESCAPE_SEQUENCE_LIMIT];
   static long esc_ptr = 0;
 
-#define __colour_bit_swap(V) ((V >> 2) | (V & 2) | ((V & 1) << 2))
+#define __colour_bit_swap(V) (((V) >> 2) | ((V) & 2) | (((V) & 1) << 2))
   
   for (; ((symbol = *str)); str++)
     if (esc == 1)
@@ -152,5 +152,7 @@ void kputs(const char* str)
 	    cursor_x++;
 	  }
       }
+
+#undef __colour_bit_swap
 }
 
