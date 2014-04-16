@@ -14,19 +14,19 @@ section .text
 	dd MULTIBOOT_CHECKSUM
 	
 	
-	; Global functions
+	; Global functions.
 	global start
 	
-	; Functions defined in C code
+	; Functions defined in C code.
 	extern kmain
 
 
 start:
-	cli				; block interrupts
-	call kmain			; call the kmain function
-	hlt				; halt the CPU
+	cli				; Block interrupts.
+	call kmain			; Call the kmain function.
+	hlt				; Halt the CPU.
 
 
 section .bss
-	resb (8 << 10)			; 8 kB of memory reserved
+	resb (8 << 10)			; 8 kB of memory reserved.
 
