@@ -25,6 +25,5 @@ void kmain(void)
       vidptr[i * 2 + 0] = str[i];
       vidptr[i * 2 + 1] = 0x19;
     }
-  return;
 }
 
