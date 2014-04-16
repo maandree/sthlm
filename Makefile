@@ -1,6 +1,6 @@
-OPTIMISE = -O3
+OPTIMISE = -O2
 
-WARN = -Wall -Wextra -pedantic -Wdouble-promotion -Wformat=2 -Winit-self       \
+WARN = -Wall -Wextra -Wdouble-promotion -Wformat=2 -Winit-self                 \
        -Wmissing-include-dirs -Wtrampolines -Wfloat-equal -Wshadow             \
        -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls           \
        -Wnested-externs -Winline -Wno-variadic-macros -Wsign-conversion        \
@@ -11,24 +11,45 @@ WARN = -Wall -Wextra -pedantic -Wdouble-promotion -Wformat=2 -Winit-self       \
        -Wvector-operation-performance -Wunsuffixed-float-constants             \
        -Wsuggest-attribute=const -Wsuggest-attribute=noreturn                  \
        -Wsuggest-attribute=pure -Wsuggest-attribute=format -Wnormalized=nfkc
+# not using:  -pedantic
 
+ASM_FLAGS = -f elf32
+
+LD_FLAGS = -nodefaultlibs -nostdlib -m elf_i386
+
+CPP_FLAGS = -D_KERNEL_
+
+MACHINE = 32
+STD = gnu99
+C_FLAGS = $(OPTIMISE) $(WARN) -m$(MACHINE) -std=$(STD) -nostdlib -nodefaultlibs \
+          -fno-omit-frame-pointer -ffreestanding -fstrict-aliasing -ftree-vrp   \
+          -fipa-pure-const -fstack-usage -funsafe-loop-optimizations            \
+          -fstrict-overflow -fno-builtin
+
+
+
+OBJ = kernel_asm kernel_c ktty
 
 
 .PHONY: all
 all: bin/kernel
 
 
-bin/kernel: link.ld obj/kernel_asm.o obj/kernel_c.o
-	mkdir -p bin
-	ld -m elf_i386 -o $@ -T $^ # link.ld must be first
+bin/kernel: link.ld $(foreach O,$(OBJ),obj/$(O).o) # link.ld must be first
+	@mkdir -p bin
+	ld $(LD_FLAGS) -o $@ -T $^
 
 obj/kernel_asm.o: src/kernel.asm
-	mkdir -p obj
-	nasm -f elf32 -o $@ $<
+	@mkdir -p obj
+	nasm $(ASM_FLAGS) -o $@ $<
 
-obj/kernel_c.o: src/kernel.c
-	mkdir -p obj
-	gcc $(OPTIMISE) $(WARN) -m32 -c -o $@ $<
+obj/kernel_c.o: src/kernel.c src/ktty.h
+	@mkdir -p obj
+	gcc $(C_FLAGS) $(CPP_FLAGS) -c -o $@ $<
+
+obj/%.o: src/%.c src/%.h
+	@mkdir -p obj
+	gcc $(C_FLAGS) $(CPP_FLAGS) -c -o $@ $<
 
 
 .PHONY: qemu

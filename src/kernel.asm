@@ -26,3 +26,7 @@ start:
 	call kmain			; call the kmain function
 	hlt				; halt the CPU
 
+
+section .bss
+	resb (8 << 10)			; 8 kB of memory reserved
+
