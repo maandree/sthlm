@@ -12,6 +12,21 @@
  */
 #define ESCAPE_SEQUENCE_LIMIT  20
 
+/**
+ * The default boldness of printed text
+ */
+#define DEFAULT_BOLDNESS  0 /* Not bold by default. */
+
+/**
+ * The default background colour of printed text
+ */
+#define DEFAULT_BACKGROUND  0 /* Black. */
+
+/**
+ * The default foreground colour of printed text
+ */
+#define DEFAULT_FOREGROUND  7 /* Dim white. */
+
 
 
 /**
@@ -27,7 +42,7 @@ static long cursor_x = 0;
 /**
  * The colour currently being used for printing
  */
-static int colour = 0x07; /* That's dim white on black */
+static int colour = (DEFAULT_BACKGROUND << 4) | DEFAULT_FOREGROUND;
 
 
 
@@ -38,9 +53,9 @@ static int colour = 0x07; /* That's dim white on black */
  */
 static void set_colour(int entry)
 {
-  static int attribute_bold = 0;
-  static int attribute_foreground = 7;
-  static int attribute_background = 0;
+  static int attribute_bold = DEFAULT_BOLDNESS;
+  static int attribute_foreground = DEFAULT_FOREGROUND;
+  static int attribute_background = DEFAULT_BACKGROUND;
   
   int entry_ = entry % 10;
   int entry_colour = (entry_ >> 2) | (entry_ & 2) | ((entry_ & 1) << 2);
@@ -49,9 +64,9 @@ static void set_colour(int entry)
     {
     case 0:
       /* Colour reset. */
-      attribute_bold = 0;
-      attribute_foreground = 7;
-      attribute_background = 0;
+      attribute_bold = DEFAULT_BOLDNESS;
+      attribute_foreground = DEFAULT_FOREGROUND;
+      attribute_background = DEFAULT_BACKGROUND;
       break;
       
     case 1:
@@ -66,12 +81,12 @@ static void set_colour(int entry)
       
     case 38:
       /* Foreground reset. */
-      attribute_foreground = 7;
+      attribute_foreground = DEFAULT_FOREGROUND;
       break;
       
     case 48:
       /* Background reset. */
-      attribute_background = 0;
+      attribute_background = DEFAULT_BACKGROUND;
       break;
       
     case 30 ... 37:
@@ -121,6 +136,7 @@ void kputs(const char* str)
   
   for (; ((symbol = *str)); str++)
     if (esc == 1)
+      /* We expect it to be an CSI. */
       esc = symbol == '[' ? 2 : 0;
     else if (esc == 2)
       if ((('0' > symbol) || (symbol > '9')) && (symbol != ';'))
@@ -130,6 +146,7 @@ void kputs(const char* str)
 	  for (i = 0; i <= esc_ptr; i++)
 	    if ((i == esc_ptr) || (esc_buf[i] == ';'))
 	      {
+		/* End of attribute, possibly the last attribute. */
 		switch (symbol)
 		  {
 		  case 'm':
@@ -167,10 +184,12 @@ void kputs(const char* str)
 		    /* Jump home. */
 		    if (cursor_y >= 0)
 		      {
+			/* On first parameter. */
 			cursor_y = ~(entry == 0 ? 0 : (entry - 1));
 			cursor_x = 0;
 		      }
 		    else
+		      /* On second (or any later) parameter. */
 		      cursor_x = entry == 0 ? 0 : (entry - 1);
 		    break;
 		    
@@ -178,9 +197,11 @@ void kputs(const char* str)
 		    /* Not recognised, lets ignore it. */
 		    break;
 		  }
+		/* Reset integer parser. */
 		entry = 0;
 	      }
 	    else
+	      /* Parse digit. */
 	      entry = entry * 10 + (esc_buf[i] & 15);
 	  /* For H (jump home): */
 	  cursor_y = cursor_y < 0 ? ~cursor_y : cursor_y;
@@ -192,13 +213,16 @@ void kputs(const char* str)
 	/* Attempt to overflow? Stop parsing! */
 	esc = 0;
       else
+	/* Store symbol to be parsed as a part of a text attribute. */
 	esc_buf[esc_ptr++] = symbol;
     else if (symbol == '\033')
+      /* Beginning awesome magic. */
       esc = 1;
     else
       {
 	if ((symbol == '\n') || (cursor_x == KTTY_COLUMNS))
 	  {
+	    /* Line overflow or new line requested. */
 	    cursor_x = 0;
 	    cursor_y++;
 	  }
@@ -209,7 +233,7 @@ void kputs(const char* str)
 	    for (i = 0; i < 2 * KTTY_COLUMNS * (KTTY_LINES - 1); i++)
 	      *(vidptr + i) = *(vidptr + i + 2 * KTTY_COLUMNS);
 	    cursor_y--;
-	    /* Clear the last line */
+	    /* Clear the last line. */
 	    for (; i <  2 * KTTY_COLUMNS * KTTY_LINES; i += 2)
 	      {
 		*(vidptr + i + 0) = ' ';
@@ -218,8 +242,10 @@ void kputs(const char* str)
 	  }
 	if (symbol != '\n')
 	  {
+	    /* Print the symbol, unless new line. */
 	    *(vidptr + (cursor_y * KTTY_COLUMNS + cursor_x) * 2 + 0) = symbol;
 	    *(vidptr + (cursor_y * KTTY_COLUMNS + cursor_x) * 2 + 1) = (char)colour;
+	    /* Move the cursor one step, line overlow is checked at next print. */
 	    cursor_x++;
 	  }
       }
