@@ -30,6 +30,7 @@ static long cursor_x = 0;
 static int colour = 0x07; /* That's dim white on black */
 
 
+
 /**
  * Set a colour attribute
  * 
@@ -37,43 +38,69 @@ static int colour = 0x07; /* That's dim white on black */
  */
 static void set_colour(int entry)
 {
+  static int attribute_bold = 0;
+  static int attribute_foreground = 7;
+  static int attribute_background = 0;
+  
   int entry_ = entry % 10;
   int entry_colour = (entry_ >> 2) | (entry_ & 2) | ((entry_ & 1) << 2);
-
+  
   switch (entry)
     {
-    case 0: /* Colour reset. */
-      colour = 0x08;
+    case 0:
+      /* Colour reset. */
+      attribute_bold = 0;
+      attribute_foreground = 7;
+      attribute_background = 0;
       break;
       
-    case 38: /* Foreground reset. */
-      colour &= ~0x0F;
+    case 1:
+      /* Bold. */
+      attribute_bold = 1;
       break;
       
-    case 48: /* Background reset. */
-      colour &= ~0xF0;
+    case 21:
+      /* Not bold. */
+      attribute_bold = 0;
       break;
       
-    case 30 ... 37: /* Dim foreground */
-      colour = (colour & ~0x0F) | (entry_colour << 0) | 0x00;
+    case 38:
+      /* Foreground reset. */
+      attribute_foreground = 7;
       break;
       
-    case 40 ... 47: /* Dim background */
-      colour = (colour & ~0xF0) | (entry_colour << 4) | 0x00;
+    case 48:
+      /* Background reset. */
+      attribute_background = 0;
       break;
       
-    case 90 ... 97: /* Brilliant foreground */
-      colour = (colour & ~0x0F) | (entry_colour << 0) | 0x08;
+    case 30 ... 37:
+      /* Dim foreground */
+      attribute_foreground = entry_colour | 0;
       break;
       
-    case 100 ... 107: /* Brilliant background */
-      colour = (colour & ~0xF0) | (entry_colour << 4) | 0x80;
+    case 40 ... 47:
+      /* Dim background */
+      attribute_background = entry_colour | 0;
+      break;
+      
+    case 90 ... 97:
+      /* Brilliant foreground */
+      attribute_foreground = entry_colour | 8;
+      break;
+      
+    case 100 ... 107:
+      /* Brilliant background */
+      attribute_background = entry_colour | 8;
       break;
       
     default:
       /* Not recognised, lets ignore it. */
       break;
     }
+  
+  /* Set colour. */
+  colour = (attribute_background << 4) | attribute_foreground | (attribute_bold << 3);
 }
 
 
@@ -105,11 +132,13 @@ void kputs(const char* str)
 	      {
 		switch (symbol)
 		  {
-		  case 'm': /* That's colour! */
+		  case 'm':
+		    /* That's colour! */
 		    set_colour(entry);
 		    break;
 		    
-		  case 'J': /* Clear everything or everything after the cursor. */
+		  case 'J':
+		    /* Clear everything or everything after the cursor. */
 		    {
 		      long int j = entry == 2 ? 0 : cursor_y * KTTY_COLUMNS + cursor_x;
 		      
@@ -121,7 +150,8 @@ void kputs(const char* str)
 		    }
 		    break;
 		    
-		  case 'H': /* Jump home. */
+		  case 'H':
+		    /* Jump home. */
 		    if (cursor_y >= 0)
 		      {
 			cursor_y = ~(entry == 0 ? 0 : (entry - 1));
