@@ -57,7 +57,10 @@ static void set_colour(int entry)
   static int attribute_foreground = DEFAULT_FOREGROUND;
   static int attribute_background = DEFAULT_BACKGROUND;
   
+  /* Extract colour value. */
   int entry_ = entry % 10;
+  /* In ANSI, bit 1 is red, bit 2 is green and bit 3 is blue,
+      but in the video memory, bit 1 is blue and bit 3 is red. */
   int entry_colour = (entry_ >> 2) | (entry_ & 2) | ((entry_ & 1) << 2);
   
   switch (entry)
