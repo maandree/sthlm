@@ -17,12 +17,64 @@
 /**
  * The current position of the cursor, line
  */
-static char cursor_y = 0;
+static long cursor_y = 0;
 
 /**
  * The current position of the cursor, column
  */
-static char cursor_x = 0;
+static long cursor_x = 0;
+
+/**
+ * The colour currently being used for printing
+ */
+static int colour = 0x07; /* That's dim white on black */
+
+
+/**
+ * Set a colour attribute
+ * 
+ * @param  entry  Colour attribute value
+ */
+static void set_colour(int entry)
+{
+  int entry_ = entry % 10;
+  int entry_colour = (entry_ >> 2) | (entry_ & 2) | ((entry_ & 1) << 2);
+
+  switch (entry)
+    {
+    case 0: /* Colour reset. */
+      colour = 0x08;
+      break;
+      
+    case 38: /* Foreground reset. */
+      colour &= ~0x0F;
+      break;
+      
+    case 48: /* Background reset. */
+      colour &= ~0xF0;
+      break;
+      
+    case 30 ... 37: /* Dim foreground */
+      colour = (colour & ~0x0F) | (entry_colour << 0) | 0x00;
+      break;
+      
+    case 40 ... 47: /* Dim background */
+      colour = (colour & ~0xF0) | (entry_colour << 4) | 0x00;
+      break;
+      
+    case 90 ... 97: /* Brilliant foreground */
+      colour = (colour & ~0x0F) | (entry_colour << 0) | 0x08;
+      break;
+      
+    case 100 ... 107: /* Brilliant background */
+      colour = (colour & ~0xF0) | (entry_colour << 4) | 0x80;
+      break;
+      
+    default:
+      /* Not recognised, lets ignore it. */
+      break;
+    }
+}
 
 
 
@@ -36,12 +88,9 @@ void kputs(const char* str)
   char* vidptr = (char*)VIDEO_MEMORY;
   char symbol;
   
-  static int colour = 0x07;
   static int esc = 0;
   static char esc_buf[ESCAPE_SEQUENCE_LIMIT];
   static long esc_ptr = 0;
-
-#define __colour_bit_swap(V) (((V) >> 2) | ((V) & 2) | (((V) & 1) << 2))
   
   for (; ((symbol = *str)); str++)
     if (esc == 1)
@@ -57,47 +106,12 @@ void kputs(const char* str)
 		switch (symbol)
 		  {
 		  case 'm': /* That's colour! */
-		    {
-		      switch (entry)
-			{
-			case 0: /* Colour reset. */
-			  colour = 0x08;
-			  break;
-			  
-			case 38: /* Foreground reset. */
-			  colour &= ~0x0F;
-			  break;
-			  
-			case 48: /* Background reset. */
-			  colour &= ~0xF0;
-			  break;
-			  
-			case 30 ... 37: /* Dim foreground */
-			  colour = (colour & ~0x0F) | (__colour_bit_swap(entry % 10) << 0) | 0x00;
-			  break;
-			  
-			case 40 ... 47: /* Dim background */
-			  colour = (colour & ~0xF0) | (__colour_bit_swap(entry % 10) << 4) | 0x00;
-			  break;
-			  
-			case 90 ... 97: /* Brilliant foreground */
-			  colour = (colour & ~0x0F) | (__colour_bit_swap(entry % 10) << 0) | 0x08;
-			  break;
-			  
-			case 100 ... 107: /* Brilliant background */
-			  colour = (colour & ~0xF0) | (__colour_bit_swap(entry % 10) << 4) | 0x80;
-			  break;
-			  
-			default:
-			  /* Not recognised, lets ignore it. */
-			  break;
-			}
-		    }
+		    set_colour(entry);
 		    break;
 		    
-		  case 'J': /* Clear everything after the cursor. */
+		  case 'J': /* Clear everything or everything after the cursor. */
 		    {
-		      long int j = cursor_y * KTTY_COLUMNS + cursor_x;
+		      long int j = entry == 2 ? 0 : cursor_y * KTTY_COLUMNS + cursor_x;
 		      
 		      for (; j < KTTY_COLUMNS * KTTY_LINES; j++)
 			{
@@ -105,15 +119,29 @@ void kputs(const char* str)
 			  *(vidptr + 2 * j + 1) = (char)colour;
 			}
 		    }
+		    break;
+		    
+		  case 'H': /* Jump home. */
+		    if (cursor_y >= 0)
+		      {
+			cursor_y = ~(entry == 0 ? 0 : (entry - 1));
+			cursor_x = 0;
+		      }
+		    else
+		      cursor_x = entry == 0 ? 0 : (entry - 1);
+		    break;
 		    
 		  default:
 		    /* Not recognised, lets ignore it. */
 		    break;
-		    }
+		  }
 		entry = 0;
 	      }
 	    else
 	      entry = entry * 10 + (esc_buf[i] & 15);
+	  /* For H (jump home): */
+	  cursor_y = cursor_y < 0 ? ~cursor_y : cursor_y;
+	  /* Reset escape reading. */
 	  esc = 0;
 	  esc_ptr = 0;
 	}
@@ -152,7 +180,5 @@ void kputs(const char* str)
 	    cursor_x++;
 	  }
       }
-
-#undef __colour_bit_swap
 }
 
