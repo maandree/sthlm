@@ -1,3 +1,5 @@
+KARCH = x86
+
 OPTIMISE = -O2
 
 WARN = -Wall -Wextra -Wdouble-promotion -Wformat=2 -Winit-self                 \
@@ -35,27 +37,40 @@ HEADERS = $(NORMALS) libc/stdint libc/inttypes libc/stddef arch/libc/stdint  \
 
 
 .PHONY: all
-all: bin/kernel
+all:
+	@/usr/bin/echo -e "\e[01;34m$@\e[21m: $^\e[00m"
+	make src/arch
+	make bin/kernel
 
+src/arch:
+	@/usr/bin/echo -e "\e[01;34m$@\e[21m: $^\e[00m"
+	ln -s "../archs/$(KARCH)" $@
 
 bin/kernel: link.ld $(foreach O,$(OBJECTS),obj/$(O).o) # link.ld must be first
+	@/usr/bin/echo -e "\e[01;34m$@\e[21m: $^\e[00m"
 	mkdir -p bin/$(shell echo $@ | cut -d / -f 1 --complement | xargs dirname)
 	ld $(LD_FLAGS) -o $@ -T $^
 
 obj/arch/kernel.o: src/arch/kernel.asm
+	@/usr/bin/echo -e "\e[01;34m$@\e[21m: $^\e[00m"
 	mkdir -p obj/$(shell echo $@ | cut -d / -f 1 --complement | xargs dirname)
 	nasm $(ASM_FLAGS) -o $@ $<
 
 obj/%.o: src/%.c $(foreach H,$(HEADERS),src/$(H).h)
+	@/usr/bin/echo -e "\e[01;34m$@\e[21m: $^\e[00m"
 	mkdir -p obj/$(shell echo $@ | cut -d / -f 1 --complement | xargs dirname)
 	gcc $(C_FLAGS) $(CPP_FLAGS) -c -o $@ $<
 
 
 .PHONY: qemu
 qemu: bin/kernel
+	@/usr/bin/echo -e "\e[01;32m$@\e[21m: $^\e[00m"
 	qemu-system-i386 -kernel bin/kernel
+
 
 .PHONY: clean
 clean:
+	@/usr/bin/echo -e "\e[01;33m$@\e[21m: $^\e[00m"
 	-rm -r obj bin
+	-rm src/arch
 
