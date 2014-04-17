@@ -31,17 +31,6 @@
 
 
 /**
- * The number of lines in the terminal
- */
-#define KTTY_LINES    25
-
-/**
- * The number of columns in the terminal
- */
-#define KTTY_COLUMNS  80
-
-
-/**
  * Print string to the terminal, may include ANSI escape codes
  * 
  * @param  str  The string to print
