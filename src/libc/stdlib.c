@@ -200,7 +200,7 @@ int vasnprintf(char* out, size_t size, const char* format, va_list args)
 	      
 	    case 's':
 	      /* Print a string. */
-	      print_this = va_arg(args, const char *);
+	      print_this = va_arg(args, const char*);
 	      break;
 	      
 	    case 'c':
