@@ -17,9 +17,13 @@
 #include "ktty.h"
 
 
+/**
+ * This is the entry point of the kernel,
+ * although there is actually stuff in
+ * arch/kernel.asm that starts before this
+ * and calls this.
+ */
 void kmane(void);
-
-
 void kmane(void)
 {
   kprintf("%[1;34;44m%s%[;30;40m%[J", "Kernels are magic");

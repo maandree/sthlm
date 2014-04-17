@@ -13,12 +13,12 @@
 ; You should have received a copy of the GNU General Public License
 ; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-bits 32					; 32-bits
+bits 32					; 32-bit machine.
+align 4					; Align instructions.
 
-	
+
 section .text
 	; Multiboot specification: http://www.gnu.org/software/grub/manual/multiboot
-	align 4
 	
 	MULTIBOOT_HEADER_MAGIC	equ 0x1BADB002
 	MULTIBOOT_HEADER_FLAGS	equ 0
