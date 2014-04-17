@@ -106,6 +106,12 @@ C_FLAGS = $(OPTIMISE) $(WARN) -m$(MACHINE) -std=$(STD) -nostdlib -nodefaultlibs 
 # Options for the general preprocessor.
 GPP_FLAGS =
 
+# Non-allowed parts of C.
+C_DISALLOW = float double
+
+# ...as C preprocessor flags
+CPP_DISALLOW = $(foreach S,$(C_DISALLOW),-D$(S)="<<< Sorry, $(S) is not allow here. >>>")
+
 
 # Objects that have both headers and source.
 NORMALS = ktty arch/ktty libc/stdlib arch/kio
@@ -150,7 +156,7 @@ all: _makeflags
 
 
 # Rebuild when flags are changed.
-_MAKEFLAGS_GROUPS = ASM_FLAGS LD_FLAGS CPP_FLAGS C_FLAGS GPP_FLAGS SUM
+_MAKEFLAGS_GROUPS = ASM_FLAGS LD_FLAGS CPP_FLAGS C_FLAGS GPP_FLAGS C_DISALLOW SUM
 _MAKEFLAGS = $(foreach G,$(_MAKEFLAGS_GROUPS),$(foreach F,$($(G)),$(G)=$(subst /,\\,$(F))))
 _MAKEFLAGS_SUM = $(shell for F in $(_MAKEFLAGS); do echo $$F; done | $(SORT) | $(SUM) | $(CUT) -d ' ' -f 1)
 .PHONY: _makeflags
@@ -194,13 +200,13 @@ obj/%.o: obj/%.asm
 obj/%.o: src/%.c $(foreach H,$(HEADERS),src/$(H).h) $(foreach H,$(GEN_HEADERS),obj/$(H).h)
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
 	$(MKDIR_P) -p $(shell $(DIRNAME) $@)
-	$(CC) $(C_FLAGS) $(CPP_FLAGS) -c -o $@ $<
+	$(CC) $(C_FLAGS) $(CPP_FLAGS) $(CPP_DISALLOW) -c -o $@ $<
 
 # Compile a generated C file, recompile all (for simplicity) if a header is modified.
 obj/%.o: obj/%.c $(foreach H,$(HEADERS),src/$(H).h) $(foreach H,$(GEN_HEADERS),obj/$(H).h)
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
 	$(MKDIR_P) -p $(shell $(DIRNAME) $@)
-	$(CC) $(C_FLAGS) $(CPP_FLAGS) -iquote{src,obj}/$(shell $(DIRNAME) $*) -c -o $@ $<
+	$(CC) $(C_FLAGS) $(CPP_FLAGS) $(CPP_DISALLOW) -iquote{src,obj}/$(shell $(DIRNAME) $*) -c -o $@ $<
 
 # Preprocess a file.
 obj/%: src/%.gpp
