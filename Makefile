@@ -34,6 +34,8 @@ LN_S ?= ln -s
 FALSE ?= false
 MAKE ?= make
 SH ?= sh
+SORT ?= sort
+SUM ?= md5sum
 XARGS ?= xargs
 DIRNAME ?= dirname
 CUT ?= cut
@@ -138,16 +140,19 @@ all: _makeflags
 
 
 # Rebuild when flags are changed.
-_MAKEFLAGS_GROUPS = ASM_FLAGS LD_FLAGS CPP_FLAGS C_FLAGS
+_MAKEFLAGS_GROUPS = ASM_FLAGS LD_FLAGS CPP_FLAGS C_FLAGS SUM
 _MAKEFLAGS = $(foreach G,$(_MAKEFLAGS_GROUPS),$(foreach F,$($(G)),$(G)=$(subst /,\\,$(F))))
+_MAKEFLAGS_SUM = $(shell for F in $(_MAKEFLAGS); do echo $$F; done | $(SORT) | $(SUM) | $(CUT) -d ' ' -f 1)
 .PHONY: _makeflags
 _makeflags:
-	@if $(foreach F,$(_MAKEFLAGS),[ ! -e .flags/$(F) ] ||) $(FALSE); then $(MAKE) _makeflags_; fi
+	@if $(foreach F,$(_MAKEFLAGS) $(_MAKEFLAGS_SUM),[ ! -e .flags/$(F) ] ||) $(FALSE); then \
+	     $(MAKE) _makeflags_; \
+	 fi
 .PHONY: _makeflags_
 _makeflags_:
 	@$(MAKE) clean
 	@$(MKDIR_P) .flags
-	@$(TOUCH) $(foreach F,$(_MAKEFLAGS),.flags/$(F))
+	@$(TOUCH) $(foreach F,$(_MAKEFLAGS) $(_MAKEFLAGS_SUM),.flags/$(F))
 
 
 # Select architecture.
