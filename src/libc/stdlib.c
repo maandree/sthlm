@@ -127,6 +127,12 @@ int vasnprintf(char* out, size_t size, const char* format, va_list args)
   char* out_end = out + (size - 1);
   char symbol;
   
+  /**
+   * Print a symbol to the the buffer
+   * 
+   * @param   c  The symbol to print
+   * @return     Zero if and only if everything the symbol could be printed
+   */
   inline int vasnprintf_(int c)
   {
     if (out_skip > 0)
@@ -144,8 +150,11 @@ int vasnprintf(char* out, size_t size, const char* format, va_list args)
     return 0;
   }
   
+  
+  /* Print string. */
   for (;;)
     {
+      /* Get next symbol or symbol from template. */
       if (print_this == NULL)
 	{
 	  /* Normal printing, from template. */
