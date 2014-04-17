@@ -24,12 +24,13 @@ STD = gnu99
 C_FLAGS = $(OPTIMISE) $(WARN) -m$(MACHINE) -std=$(STD) -nostdlib -nodefaultlibs \
           -fno-omit-frame-pointer -ffreestanding -fstrict-aliasing -ftree-vrp   \
           -fipa-pure-const -fstack-usage -funsafe-loop-optimizations            \
-          -fstrict-overflow -fno-builtin
+          -fstrict-overflow -fno-builtin -Isrc/libc
 
 
 NORMALS = ktty arch/ktty
 OBJECTS = arch/kernel kernel $(NORMALS)
-HEADERS = $(NORMALS)
+HEADERS = $(NORMALS) libc/stdint libc/inttypes libc/stddef arch/libc/stdint \
+          arch/libc/inttypes
 
 
 
