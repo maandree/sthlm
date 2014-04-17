@@ -22,7 +22,7 @@ void kmain(void);
 
 void kmain(void)
 {
-  kputs("\033[1;34;44mKernels are magic\033[;30m\033[J");
+  kprintf("%[1;34;44m%s%[;30;40m%[J", "Kernels are magic");
   /* By using 30;40 (black on black) we are hiding the cursor. */
 }
 

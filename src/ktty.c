@@ -16,6 +16,8 @@
  */
 #include "ktty.h"
 
+#include <stdlib.h>
+
 
 /**
  * The beginning of the memory where the output is written
@@ -27,6 +29,7 @@
  * How long an escape sequence can be before it is ridiculous
  */
 #define ESCAPE_SEQUENCE_LIMIT  20
+
 
 /**
  * The default boldness of printed text
@@ -255,5 +258,42 @@ void kputs(const char* str)
 	    cursor_x++;
 	  }
       }
+}
+
+
+/**
+ * Format an print a string into the terminal
+ * 
+ * @param   format  The format template to use
+ * @param   ...     Input data to fill the template with
+ * @return          Zero if and only if everything was printed, otherwise
+ *                  the output was truncated with an utimate length of `size`
+ */
+int kprintf(const char* format, ...)
+{
+  int rc;
+  va_list args;
+  va_start(args, format);
+  rc = kvaprintf(format, args);
+  va_end(args);
+  return rc;
+}
+
+
+/**
+ * Format an print a string into the terminal
+ * 
+ * @param   format  The format template to use
+ * @param   args    Input data to fill the template with
+ * @return          Zero if and only if everything was printed, otherwise
+ *                  the output was truncated with an utimate length of `size`
+ */
+int kvaprintf(const char* format, va_list args)
+{
+  int rc;
+  char buffer[KPRINT_BUFFER_SIZE + 1];
+  rc = vasnprintf(buffer, KPRINT_BUFFER_SIZE + 1, format, args);
+  kputs(buffer);
+  return rc;
 }
 

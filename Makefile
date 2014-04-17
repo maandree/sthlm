@@ -21,15 +21,15 @@ CPP_FLAGS = -D_KERNEL_
 
 MACHINE = 32
 STD = gnu99
-C_FLAGS = $(OPTIMISE) $(WARN) -m$(MACHINE) -std=$(STD) -nostdlib -nodefaultlibs \
-          -fno-omit-frame-pointer -ffreestanding -fstrict-aliasing -ftree-vrp   \
-          -fipa-pure-const -fstack-usage -funsafe-loop-optimizations            \
-          -fstrict-overflow -fno-builtin -Isrc/libc
+C_FLAGS = $(OPTIMISE) $(WARN) -m$(MACHINE) -std=$(STD) -nostdlib -nodefaultlibs  \
+          -Isrc/libc -fno-omit-frame-pointer -ffreestanding -ftree-vrp           \
+          -fstrict-aliasing -fipa-pure-const -fstack-usage -fstrict-overflow     \
+          -funsafe-loop-optimizations -fno-builtin
 
 
-NORMALS = ktty arch/ktty
+NORMALS = ktty arch/ktty libc/stdlib
 OBJECTS = arch/kernel kernel $(NORMALS)
-HEADERS = $(NORMALS) libc/stdint libc/inttypes libc/stddef arch/libc/stdint \
+HEADERS = $(NORMALS) libc/stdint libc/inttypes libc/stddef arch/libc/stdint  \
           arch/libc/inttypes
 
 

@@ -14,61 +14,46 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KERNEL_KTTY_H
-#define KERNEL_KTTY_H
+#ifndef KERNEL_LIBC_STDLIB_H
+#define KERNEL_LIBC_STDLIB_H
 
 
-#include "arch/ktty.h"
+#include <stddef.h>
 #include <stdarg.h> /* built in */
 
 
-
 /**
- * Buffer size for communication between `kvaprintf` and `vasnprintf`
+ * NULL-pointer
  */
-#define KPRINT_BUFFER_SIZE  256
-
-
-
-/**
- * The number of lines in the terminal
- */
-#define KTTY_LINES    25
-
-/**
- * The number of columns in the terminal
- */
-#define KTTY_COLUMNS  80
+#define NULL  ((void*)0)
 
 
 /**
- * Print string to the terminal, may include ANSI escape codes
+ * Format an print a string into memory
  * 
- * @param  str  The string to print
- */
-void kputs(const char* str);
-
-/**
- * Format an print a string into the terminal
- * 
+ * @param   out     Location to print the string to
+ * @param   size    The about of memory, in characters, allocated to `out`
  * @param   format  The format template to use
  * @param   ...     Input data with which to fill the template
- * @return          Zero if and only if everything was printed,
- *                  otherwise the output was truncated with an
- *                  utimate length of `KPRINT_BUFFER_SIZE`
+ * @return          Zero if and only if everything was printed, otherwise
+ *                  the output was truncated with an utimate length of
+ *                  `size` including a NUL-termination.
  */
-int kprintf(const char* format, ...);
+int snprintf(char* out, size_t size, const char* format, ...);
+
 
 /**
- * Format an print a string into the terminal
+ * Format an print a string into memory
  * 
+ * @param   out     Location to print the string to
+ * @param   size    The about of memory, in characters, allocated to `out`
  * @param   format  The format template to use
  * @param   args    Input data with which to fill the template
- * @return          Zero if and only if everything was printed,
- *                  otherwise the output was truncated with an
- *                  utimate length of `KPRINT_BUFFER_SIZE`
+ * @return          Zero if and only if everything was printed, otherwise
+ *                  the output was truncated with an utimate length of
+ *                  `size` including a NUL-termination.
  */
-int kvaprintf(const char* format, va_list args);
+int vasnprintf(char* out, size_t size, const char* format, va_list args);
 
 
 #endif

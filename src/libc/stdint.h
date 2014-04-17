@@ -136,7 +136,7 @@ typedef xint64_t xint_least64_t;
 # define UINTPTR_MAX  UINT64_MAX
 #else
 # error Integer with more than 32 bits, but not exactly 64 bits.
-#else
+#endif
 
 
 #if INTMAX_BITS <= 32
@@ -149,7 +149,7 @@ typedef xint64_t xint_least64_t;
 # define UINTMAX_MAX  UINT64_MAX
 #else
 # error Integer with more than 32 bits, but not exactly 64 bits.
-#else
+#endif
 
 
 #undef __singed_min
