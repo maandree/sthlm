@@ -164,7 +164,7 @@ bin/kernel: link.ld $(foreach O,$(OBJECTS),obj/$(O).o) # $link.ld must be first
 	$(LD) $(LD_FLAGS) -o $@ -T $^
 
 # Compile an assembly file.
-obj/arch/kernel.o: src/arch/kernel.asm
+obj/%.o: src/%.asm
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
 	$(MKDIR_P) -p obj/$(shell echo $@ | $(CUT) -d / -f 1 --complement | $(XARGS) $(DIRNAME))
 	$(ASM) $(ASM_FLAGS) -o $@ $<
