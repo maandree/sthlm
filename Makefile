@@ -27,10 +27,10 @@ C_FLAGS = $(OPTIMISE) $(WARN) -m$(MACHINE) -std=$(STD) -nostdlib -nodefaultlibs 
           -funsafe-loop-optimizations -fno-builtin
 
 
-NORMALS = ktty arch/ktty libc/stdlib
+NORMALS = ktty arch/ktty libc/stdlib arch/kio
 OBJECTS = arch/kernel kernel $(NORMALS)
 HEADERS = $(NORMALS) libc/stdint libc/inttypes libc/stddef arch/libc/stdint  \
-          arch/libc/inttypes
+          arch/libc/inttypes kio
 
 
 
