@@ -19,11 +19,6 @@
 #include <stdlib.h>
 
 
-/**
- * The beginning of the memory where the output is written
- */
-#define VIDEO_MEMORY  0xb8000
-
 
 /**
  * How long an escape sequence can be before it is ridiculous
