@@ -40,6 +40,8 @@ XARGS ?= xargs
 DIRNAME ?= dirname
 CUT ?= cut
 # `cut` must support --complement
+GPP ?= gpp
+# `gpp` is general-preprocessor
 
 
 # Output format for the directly used assembler.
@@ -102,6 +104,9 @@ C_FLAGS = $(OPTIMISE) $(WARN) -m$(MACHINE) -std=$(STD) -nostdlib -nodefaultlibs 
           -fstrict-aliasing -fipa-pure-const -fstack-usage -fstrict-overflow     \
           -funsafe-loop-optimizations -fno-builtin
 
+# Options for the general preprocessor.
+GPP_FLAGS =
+
 
 # Objects that have both headers and source.
 NORMALS = ktty arch/ktty libc/stdlib arch/kio
@@ -140,7 +145,7 @@ all: _makeflags
 
 
 # Rebuild when flags are changed.
-_MAKEFLAGS_GROUPS = ASM_FLAGS LD_FLAGS CPP_FLAGS C_FLAGS SUM
+_MAKEFLAGS_GROUPS = ASM_FLAGS LD_FLAGS CPP_FLAGS C_FLAGS GPP_FLAGS SUM
 _MAKEFLAGS = $(foreach G,$(_MAKEFLAGS_GROUPS),$(foreach F,$($(G)),$(G)=$(subst /,\\,$(F))))
 _MAKEFLAGS_SUM = $(shell for F in $(_MAKEFLAGS); do echo $$F; done | $(SORT) | $(SUM) | $(CUT) -d ' ' -f 1)
 .PHONY: _makeflags
@@ -174,12 +179,29 @@ obj/%.o: src/%.asm
 	$(MKDIR_P) -p obj/$(shell echo $@ | $(CUT) -d / -f 1 --complement | $(XARGS) $(DIRNAME))
 	$(ASM) $(ASM_FLAGS) -o $@ $<
 
+# Compile a generated assembly file.
+obj/%.o: obj/%.asm
+	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
+	$(MKDIR_P) -p obj/$(shell echo $@ | $(CUT) -d / -f 1 --complement | $(XARGS) $(DIRNAME))
+	$(ASM) $(ASM_FLAGS) -o $@ $<
+
 # Compile a C file, recompile all (for simplicity) if a header is modified.
 obj/%.o: src/%.c $(foreach H,$(HEADERS),src/$(H).h)
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
 	$(MKDIR_P) -p obj/$(shell echo $@ | $(CUT) -d / -f 1 --complement | $(XARGS) $(DIRNAME))
 	$(CC) $(C_FLAGS) $(CPP_FLAGS) -c -o $@ $<
 
+# Compile a generated C file, recompile all (for simplicity) if a header is modified.
+obj/%.o: obj/%.c $(foreach H,$(HEADERS),src/$(H).h)
+	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
+	$(MKDIR_P) -p obj/$(shell echo $@ | $(CUT) -d / -f 1 --complement | $(XARGS) $(DIRNAME))
+	$(CC) $(C_FLAGS) $(CPP_FLAGS) -c -o $@ $<
+
+# Preprocess a file.
+obj/%: src/%.gpp
+	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
+	$(MKDIR_P) -p obj/$(shell echo $@ | $(CUT) -d / -f 1 --complement | $(XARGS) $(DIRNAME))
+	$(GPP) $(GPP_FLAGS) -s £ -i $< -o $@
 
 
 # Test kernel image using QEMU.
