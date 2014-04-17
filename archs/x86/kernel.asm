@@ -33,12 +33,12 @@ section .text
 	global start
 	
 	; Functions defined in C code.
-	extern kmain
+	extern kmane
 
 
 start:
 	cli				; Block interrupts.
-	call kmain			; Call the kmain function.
+	call kmane			; Call the kmane function.
 	hlt				; Halt the CPU.
 
 

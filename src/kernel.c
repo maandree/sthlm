@@ -17,10 +17,10 @@
 #include "ktty.h"
 
 
-void kmain(void);
+void kmane(void);
 
 
-void kmain(void)
+void kmane(void)
 {
   kprintf("%[1;34;44m%s%[;30;40m%[J", "Kernels are magic");
   /* By using 30;40 (black on black) we are hiding the cursor. */
