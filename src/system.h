@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KERNEL_KIO_H
-#define KERNEL_KIO_H
+#ifndef KERNEL_SYSTEM_H
+#define KERNEL_SYSTEM_H
 
 
-#include "arch/kio.h"
+#include "arch/system.h"
 
 
 #endif

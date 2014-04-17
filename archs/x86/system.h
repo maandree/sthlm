@@ -14,11 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KERNEL_KIO_H
-#define KERNEL_KIO_H
+#ifndef KERNEL_ARCH_SYSTEM_H
+#define KERNEL_ARCH_SYSTEM_H
 
 
-#include "arch/kio.h"
+/**
+ * Structure of registers
+ */
+typedef struct registers
+{
+  /* Do not change the order */
+  unsigned int gs, fs, es, ds;
+  unsigned int edi, esi, ebp, esp, ebx, edx, ecx, eax;
+  unsigned int int_no, err_code;
+  unsigned int eip, cs, eflags, useresp, ss;
+} registers_t;
 
 
 #endif

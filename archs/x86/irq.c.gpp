@@ -1,3 +1,4 @@
+/* -*- c -*- */
 /**
  * Copyright © 2014  Mattias Andrée (maandree@member.fsf.org)
  * 
@@ -14,12 +15,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KERNEL_KIO_H
-#define KERNEL_KIO_H
+#include "irq.h"
+
+#include "../kio.h"
 
 
-#include "arch/kio.h"
+£>IRQ_COUNT=16
 
 
-#endif
+/**
+ * IRQ routines
+ */
+static void* irq_routines[IRQ_COUNT] = {0};
+
+
+/**
+ * IRQ handler
+ * 
+ * @param  regs  Registers
+ */
+void irq_handler(registers_t* regs)
+{
+  void (*handler)(registers_t*);
+  handler = irq_routines[regs->int_no - FIRST_IRQ];
+  
+  if (handler != 0)
+    handler(regs);
+  if (regs->int_no >= 40)
+    portputc(0xA0, 0x20);
+  portputc(0x20, 0x20);
+}
 

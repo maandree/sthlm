@@ -36,10 +36,9 @@ MAKE ?= make
 SH ?= sh
 SORT ?= sort
 SUM ?= md5sum
-XARGS ?= xargs
 DIRNAME ?= dirname
 CUT ?= cut
-# `cut` must support --complement
+SED ?= sed
 GPP ?= gpp
 # `gpp` is general-preprocessor
 
@@ -111,12 +110,18 @@ GPP_FLAGS =
 # Objects that have both headers and source.
 NORMALS = ktty arch/ktty libc/stdlib arch/kio
 
+# Objects that have both generated headers and generated source.
+GEN_NORMALS = arch/irq
+
 # Object that have (perhaps only) source.
-OBJECTS = arch/kernel kernel $(NORMALS)
+OBJECTS = arch/kernel kernel arch/irq_asm $(NORMALS) $(GEN_NORMALS)
 
 # C header files.
 HEADERS = $(NORMALS) libc/stdint libc/inttypes libc/stddef arch/libc/stdint  \
-          arch/libc/inttypes kio
+          arch/libc/inttypes kio system arch/system
+
+# Generated C header files.
+GEN_HEADERS = $(GEN_NORMALS)
 
 
 # Architecture for QEMU.
@@ -170,37 +175,37 @@ src/arch:
 # Link everything together to a usable kernel image.
 bin/kernel: link.ld $(foreach O,$(OBJECTS),obj/$(O).o) # $link.ld must be first
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
-	$(MKDIR_P) -p bin/$(shell echo $@ | $(CUT) -d / -f 1 --complement | $(XARGS) $(DIRNAME))
+	$(MKDIR_P) -p $(shell $(DIRNAME) $@)
 	$(LD) $(LD_FLAGS) -o $@ -T $^
 
 # Compile an assembly file.
 obj/%.o: src/%.asm
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
-	$(MKDIR_P) -p obj/$(shell echo $@ | $(CUT) -d / -f 1 --complement | $(XARGS) $(DIRNAME))
+	$(MKDIR_P) -p $(shell $(DIRNAME) $@)
 	$(ASM) $(ASM_FLAGS) -o $@ $<
 
 # Compile a generated assembly file.
 obj/%.o: obj/%.asm
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
-	$(MKDIR_P) -p obj/$(shell echo $@ | $(CUT) -d / -f 1 --complement | $(XARGS) $(DIRNAME))
+	$(MKDIR_P) -p $(shell $(DIRNAME) $@)
 	$(ASM) $(ASM_FLAGS) -o $@ $<
 
 # Compile a C file, recompile all (for simplicity) if a header is modified.
-obj/%.o: src/%.c $(foreach H,$(HEADERS),src/$(H).h)
+obj/%.o: src/%.c $(foreach H,$(HEADERS),src/$(H).h) $(foreach H,$(GEN_HEADERS),obj/$(H).h)
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
-	$(MKDIR_P) -p obj/$(shell echo $@ | $(CUT) -d / -f 1 --complement | $(XARGS) $(DIRNAME))
+	$(MKDIR_P) -p $(shell $(DIRNAME) $@)
 	$(CC) $(C_FLAGS) $(CPP_FLAGS) -c -o $@ $<
 
 # Compile a generated C file, recompile all (for simplicity) if a header is modified.
-obj/%.o: obj/%.c $(foreach H,$(HEADERS),src/$(H).h)
+obj/%.o: obj/%.c $(foreach H,$(HEADERS),src/$(H).h) $(foreach H,$(GEN_HEADERS),obj/$(H).h)
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
-	$(MKDIR_P) -p obj/$(shell echo $@ | $(CUT) -d / -f 1 --complement | $(XARGS) $(DIRNAME))
-	$(CC) $(C_FLAGS) $(CPP_FLAGS) -c -o $@ $<
+	$(MKDIR_P) -p $(shell $(DIRNAME) $@)
+	$(CC) $(C_FLAGS) $(CPP_FLAGS) -iquote{src,obj}/$(shell $(DIRNAME) $*) -c -o $@ $<
 
 # Preprocess a file.
 obj/%: src/%.gpp
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
-	$(MKDIR_P) -p obj/$(shell echo $@ | $(CUT) -d / -f 1 --complement | $(XARGS) $(DIRNAME))
+	$(MKDIR_P) -p $(shell $(DIRNAME) $@)
 	$(GPP) $(GPP_FLAGS) -s £ -i $< -o $@
 
 

@@ -1,3 +1,4 @@
+/* -*- c -*- */
 /**
  * Copyright © 2014  Mattias Andrée (maandree@member.fsf.org)
  * 
@@ -14,11 +15,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KERNEL_KIO_H
-#define KERNEL_KIO_H
+#ifndef KERNEL_ARCH_IRQ_H
+#define KERNEL_ARCH_IRQ_H
 
 
-#include "arch/kio.h"
+#include "../system.h"
+
+
+£>IRQ_COUNT=16
+£>FIRST_IRQ=32
+
+
+/**
+ * The number of IRQ:s on the system
+ */
+#define IRQ_COUNT  £{IRQ_COUNT}
+
+/**
+ * The first IRQ
+ */
+#define FIRST_IRQ  £{FIRST_IRQ}
+
+
+/**
+ * IRQ handler
+ * 
+ * @param  regs  Registers
+ */
+void irq_handler(registers_t* r);
+
+
+£>for i in $(seq 0 $(( ${IRQ_COUNT} - 1 ))); do
+/**
+ * IRQ gate, defined in irq_asm
+ * 
+ * @param  regs  Registers
+ */
+void irq_gate£{i}(registers_t* regs);
+£>done
 
 
 #endif
