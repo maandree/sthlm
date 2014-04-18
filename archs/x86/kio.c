@@ -26,7 +26,7 @@
 unsigned char portgetc(unsigned short port)
 {
   unsigned char rc;
-  __asm__ __volatile__ ("inb %1, %0" : "=a" (rc) : "dN" (port));
+  asm volatile("inb %1, %0" : "=a" (rc) : "dN" (port));
   return rc;
 }
 
@@ -39,6 +39,6 @@ unsigned char portgetc(unsigned short port)
  */
 void portputc(unsigned short port, unsigned char data)
 {
-  __asm__ __volatile__("outb %1, %0" : : "dN" (port), "a" (data));
+  asm volatile("outb %1, %0" : : "dN" (port), "a" (data));
 }
 

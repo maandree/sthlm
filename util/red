@@ -1,0 +1,28 @@
+#!/bin/sh
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
+
+ECHO_E="$1"
+CMD="$2"
+shift 2
+${ECHO_E} -n '\033[00;01;37m'
+echo -n "${CMD} "
+${ECHO_E} -n '\033[00;37m'
+echo -n "$@"
+${ECHO_E} '\033[00;31m'
+output="$("${CMD}" "$@" 2>&1)"
+rc=$?
+if [ ! "${output}" = "" ]; then
+    echo "${output}"
+fi
+if [ ${rc} = 0 ] && [ ! "${output}" = "" ]; then
+    sleep 3 ## Building freezing on us on warnings
+            ## ensures that we see them (especially
+            ## when in red) and conditions us to fix
+            ## fix it.
+fi
+${ECHO_E} -n '\033[00m'
+exit ${rc}
+

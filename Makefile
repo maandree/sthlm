@@ -15,32 +15,36 @@
 
 
 # The architecture to compile the kernel with.
-KARCH ?= x86
+KARCH = x86
 
 
 # Programs to use.
-CC ?= gcc
-LD ?= ld
-ASM ?= nasm
-RM ?= rm
-RM_R ?= $(RM) -r
-MKDIR ?= mkdir
-MKDIR_P ?= $(MKDIR) -p
-ECHO ?= /bin/echo
-ECHO_E ?= $(ECHO) -e
-TOUCH ?= touch
-LN ?= ln
-LN_S ?= ln -s
-FALSE ?= false
-MAKE ?= make
-SH ?= sh
-SORT ?= sort
-SUM ?= md5sum
-DIRNAME ?= dirname
-CUT ?= cut
-SED ?= sed
-GPP ?= gpp
+CC = gcc
+LD = ld
+ASM = nasm
+RM = rm
+RM_R = $(RM) -r
+RM_F = $(RM) -f
+RM_RF = $(RM) -r -f
+MKDIR = mkdir
+MKDIR_P = $(MKDIR) -p
+ECHO = /bin/echo
+ECHO_E = $(ECHO) -e
+# ECHO_E must also support `-n`
+TOUCH = touch
+LN = ln
+LN_S = ln -s
+FALSE = false
+MAKE = make
+SH = sh
+SORT = sort
+SUM = md5sum
+DIRNAME = dirname
+CUT = cut
+SED = sed
+GPP = gpp
 # `gpp` is general-preprocessor
+R = @util/red "$(ECHO_E)"
 
 
 # Output format for the directly used assembler.
@@ -114,17 +118,17 @@ CPP_DISALLOW = $(foreach S,$(C_DISALLOW),-D$(S)="<<< Sorry, $(S) is not allow he
 
 
 # Objects that have both headers and source.
-NORMALS = ktty arch/ktty libc/stdlib arch/kio
+NORMALS = ktty arch/ktty libc/stdlib arch/kio arch/idt arch/timer
 
 # Objects that have both generated headers and generated source.
 GEN_NORMALS = arch/irq
 
 # Object that have (perhaps only) source.
-OBJECTS = arch/kernel kernel arch/irq_asm $(NORMALS) $(GEN_NORMALS)
+OBJECTS = arch/kernel kernel arch/irq_asm arch/idt_asm $(NORMALS) $(GEN_NORMALS)
 
 # C header files.
 HEADERS = $(NORMALS) libc/stdint libc/inttypes libc/stddef arch/libc/stdint  \
-          arch/libc/inttypes kio system arch/system
+          arch/libc/inttypes kio system arch/system timer
 
 # Generated C header files.
 GEN_HEADERS = $(GEN_NORMALS)
@@ -138,11 +142,11 @@ endif
 endif
 
 # Flags for QEMU.
-QEMU_RAM ?= 512
-QEMU_CPU ?= host
-QEMU_CPUS ?= 1
-QEMU_MACHINE ?= type=pc,accel=kvm
-# QEMU_FLAGS ?= -m $(QEMU_RAM) -machine $(QEMU_MACHINE) -cpu $(QEMU_CPU) -smp $(QEMU_CPUS) -sdl
+QEMU_RAM = 512
+QEMU_CPU = host
+QEMU_CPUS = 1
+QEMU_MACHINE = type=pc,accel=kvm
+# QEMU_FLAGS = -m $(QEMU_RAM) -machine $(QEMU_MACHINE) -cpu $(QEMU_CPU) -smp $(QEMU_CPUS) -sdl
 # Not needed at the moment, just slows down the initialisation of QEMU
 
 
@@ -174,52 +178,52 @@ _makeflags_:
 # Select architecture.
 src/arch:
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
-	-$(RM) $@
-	$(LN_S) "../archs/$(KARCH)" $@
+	-$(R) $(RM_F) $@
+	$(R) $(LN_S) "../archs/$(KARCH)" $@
 
 
 # Link everything together to a usable kernel image.
 bin/kernel: link.ld $(foreach O,$(OBJECTS),obj/$(O).o) # $link.ld must be first
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
-	$(MKDIR_P) -p $(shell $(DIRNAME) $@)
-	$(LD) $(LD_FLAGS) -o $@ -T $^
+	$(R) $(MKDIR_P) $(shell $(DIRNAME) $@)
+	$(R) $(LD) $(LD_FLAGS) -o $@ -T $^
 
 # Compile an assembly file.
 obj/%.o: src/%.asm
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
-	$(MKDIR_P) -p $(shell $(DIRNAME) $@)
-	$(ASM) $(ASM_FLAGS) -o $@ $<
+	$(R) $(MKDIR_P) $(shell $(DIRNAME) $@)
+	$(R) $(RED) $(ASM) $(ASM_FLAGS) -o $@ $<
 
 # Compile a generated assembly file.
 obj/%.o: obj/%.asm
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
-	$(MKDIR_P) -p $(shell $(DIRNAME) $@)
-	$(ASM) $(ASM_FLAGS) -o $@ $<
+	$(R) $(MKDIR_P) $(shell $(DIRNAME) $@)
+	$(R) $(ASM) $(ASM_FLAGS) -o $@ $<
 
 # Compile a C file, recompile all (for simplicity) if a header is modified.
 obj/%.o: src/%.c $(foreach H,$(HEADERS),src/$(H).h) $(foreach H,$(GEN_HEADERS),obj/$(H).h)
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
-	$(MKDIR_P) -p $(shell $(DIRNAME) $@)
-	$(CC) $(C_FLAGS) $(CPP_FLAGS) $(CPP_DISALLOW) -c -o $@ $<
+	$(R) $(MKDIR_P) $(shell $(DIRNAME) $@)
+	$(R) $(CC) $(C_FLAGS) $(CPP_FLAGS) $(CPP_DISALLOW) -iquote{src,obj}/$(shell $(DIRNAME) $*) -c -o $@ $<
 
 # Compile a generated C file, recompile all (for simplicity) if a header is modified.
 obj/%.o: obj/%.c $(foreach H,$(HEADERS),src/$(H).h) $(foreach H,$(GEN_HEADERS),obj/$(H).h)
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
-	$(MKDIR_P) -p $(shell $(DIRNAME) $@)
-	$(CC) $(C_FLAGS) $(CPP_FLAGS) $(CPP_DISALLOW) -iquote{src,obj}/$(shell $(DIRNAME) $*) -c -o $@ $<
+	$(R) $(MKDIR_P) $(shell $(DIRNAME) $@)
+	$(R) $(CC) $(C_FLAGS) $(CPP_FLAGS) $(CPP_DISALLOW) -iquote{src,obj}/$(shell $(DIRNAME) $*) -c -o $@ $<
 
 # Preprocess a file.
 obj/%: src/%.gpp
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
-	$(MKDIR_P) -p $(shell $(DIRNAME) $@)
-	$(GPP) $(GPP_FLAGS) -s £ -i $< -o $@
+	$(R) $(MKDIR_P) $(shell $(DIRNAME) $@)
+	$(R) $(GPP) $(GPP_FLAGS) -s £ -i $< -o $@
 
 
 # Test kernel image using QEMU.
 .PHONY: qemu
-qemu: bin/kernel
+qemu: all
 	@$(ECHO_E) "\e[01;32m$@\e[21m: $^\e[00m"
-	qemu-system-$(QEMU_ARCH) $(QEMU_FLAGS) -kernel $<
+	qemu-system-$(QEMU_ARCH) $(QEMU_FLAGS) -kernel bin/kernel
 
 
 # Clean the directory from compiled files.

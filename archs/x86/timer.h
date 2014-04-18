@@ -14,30 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "ktty.h"
-#include "timer.h"
+#ifndef KERNEL_ARCH_TIMER_H
+#define KERNEL_ARCH_TIMER_H
 
 
-/**
- * This is the entry point of the kernel,
- * although there is actually stuff in
- * arch/kernel.asm that starts before this
- * and calls this.
- */
-void kmane(void) __attribute__((noreturn));
-void kmane(void)
-{
-  int i;
-  kprintf("%[1;34;44m%s%[;30;40m%[J", "Kernels are magic");
-  /* By using 30;40 (black on black) we are hiding the cursor. */
-  
-  timer_initialise();
-  timer_phase(1000);
-  
-  for (i = 0;; i++)
-    {
-      timer_wait(1000);
-      kprintf("%[H%[1;34;44m%i%[;30;40m%[K", i);
-    }
-}
+#include "../system.h"
+
+
+void timer_phase(int hertz);
+void timer_initialise(void);
+void timer_wait(int ticks);
+
+
+#endif
 

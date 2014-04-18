@@ -33,11 +33,15 @@ section .text
 	global start
 	
 	; Functions defined in C code.
-	extern kmane
+	extern kmane 			; kernel.c
+	extern irq_initialise		; arch/irq.c.gpp
+	extern idt_initialise		; arch/idt.c
 
 
 start:
 	cli				; Block interrupts.
+	call idt_initialise		; Initialise IDT support.
+	call irq_initialise		; Initialise IRQ support.
 	call kmane			; Call the kmane function.
 	hlt				; Halt the CPU.
 

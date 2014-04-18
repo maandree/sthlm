@@ -26,7 +26,7 @@
 /**
  * IRQ routines
  */
-static void* irq_routines[IRQ_COUNT] = {0};
+static irq_handler_t* irq_routines[IRQ_COUNT] = {IRQ_IGN};
 
 
 /**
@@ -36,13 +36,38 @@ static void* irq_routines[IRQ_COUNT] = {0};
  */
 void irq_handler(registers_t* regs)
 {
-  void (*handler)(registers_t*);
-  handler = irq_routines[regs->int_no - FIRST_IRQ];
+  irq_handler_t* handler = irq_routines[regs->int_no - FIRST_IRQ];
   
-  if (handler != 0)
-    handler(regs);
-  if (regs->int_no >= 40)
-    portputc(0xA0, 0x20);
+  if (handler != IRQ_IGN)  handler(regs);
+  if (regs->int_no >= 40)  portputc(0xA0, 0x20);
   portputc(0x20, 0x20);
+}
+
+
+/**
+ * Install an IRQ handler
+ * 
+ * @param  irq      The index of the IRQ
+ * @param  handler  The IRQ handler
+ */
+void irq(long int irq, irq_handler_t* handler)
+{
+  irq_routines[irq] = handler;
+}
+
+
+/**
+ * Initialise IRQ support
+ */
+void irq_initialise(void)
+{
+  portputc(0x20, 0x11);  portputc(0xA0, 0x11);
+  portputc(0x21, 0x20);  portputc(0xA1, 0x28);
+  portputc(0x21, 0x04);  portputc(0xA1, 0x02);
+  portputc(0x21, 0x01);  portputc(0xA1, 0x01);
+  portputc(0x21, 0x0);   portputc(0xA1, 0x0);
+£>for i in $(seq 0 $(( ${IRQ_COUNT} - 1 ))); do
+  idt_set_gate(FIRST_IRQ + £{i}, irq_gate£{i}, 0x08, 0x8E);
+£>done
 }
 

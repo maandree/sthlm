@@ -19,7 +19,7 @@
 #define KERNEL_ARCH_IRQ_H
 
 
-#include "../system.h"
+#include "idt.h"
 
 
 £>IRQ_COUNT=16
@@ -36,14 +36,37 @@
  */
 #define FIRST_IRQ  £{FIRST_IRQ}
 
+/**
+ * Do not act upon the interruption
+ */
+#define IRQ_IGN  0
+
+
+/**
+ * IRQ handler function type
+ */
+typedef idt_handler_t irq_handler_t;
+
 
 /**
  * IRQ handler
  * 
  * @param  regs  Registers
  */
-void irq_handler(registers_t* r);
+void irq_handler(registers_t* regs);
 
+/**
+ * Install an IRQ handler
+ * 
+ * @param  irq      The index of the IRQ
+ * @param  handler  The IRQ handler
+ */
+void irq(long int irq, irq_handler_t* handler);
+
+/**
+ * Initialise IRQ support
+ */
+void irq_initialise(void);
 
 £>for i in $(seq 0 $(( ${IRQ_COUNT} - 1 ))); do
 /**

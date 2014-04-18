@@ -14,43 +14,13 @@
 ; You should have received a copy of the GNU General Public License
 ; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-£>IRQ_COUNT=16
-£>FIRST_IRQ=32
 
-; Functions defined in irq.c.gpp:
-extern irq_handler
+; Defined in idt.c
+extern idtp
 
-%macro IRQ_GATE 1
-	global irq_gate%1
-	irq_gate%1:
-		cli
-		push byte 0
-		push byte (£{FIRST_IRQ} + %1)
-		pusha
-		push ds
-		push es
-		push fs
-		push gs
-		mov ax, 0x10
-		mov ds, ax
-		mov es, ax
-		mov fs, ax
-		mov gs, ax
-		mov eax, esp
-		push eax
-		mov eax, irq_handler
-		call eax
-		pop eax
-		pop gs
-		pop fs
-		pop es
-		pop ds
-		popa
-		add esp, 8
-		iret
-%endmacro
-
-£>for i in $(seq 0 $(( ${IRQ_COUNT} - 1 ))); do
-	IRQ_GATE £{i}
-£>done
+; Load interrupt descriptor
+global idt_load
+idt_load:
+	lidt [idtp]
+	ret
 
