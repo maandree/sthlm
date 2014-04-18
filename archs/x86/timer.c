@@ -76,6 +76,6 @@ void timer_wait(int ticks)
   /* TODO: overflow at the 2147483648:th (slightly below 25 days at 1000 hz) tick! */
   int end_tick = timer_ticks + ticks;
   while (timer_ticks < end_tick)
-    ; /* TODO: How do we relax the CPU? */
+    relax();
 }
 

@@ -127,7 +127,7 @@ OBJECTS = arch/kernel kernel arch/irq_asm arch/idt_asm $(NORMALS) $(GEN_NORMALS)
 
 # C header files.
 HEADERS = $(NORMALS) libc/stdint libc/inttypes libc/stddef arch/libc/stdint  \
-          arch/libc/inttypes kio system arch/system timer
+          arch/libc/inttypes kio system timer arch/system
 
 # Generated C header files.
 GEN_HEADERS = $(GEN_NORMALS)

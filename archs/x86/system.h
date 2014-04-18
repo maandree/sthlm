@@ -31,5 +31,16 @@ typedef struct registers
 } registers_t;
 
 
+/**
+ * Wait until the next interrupt
+ */
+static inline void relax(void)
+{
+  asm volatile("hlt");
+}
+/* Seriously, inline this, it is just one assembly instruction. */
+/* Must be in the header file, otherwise it cannot be inlined. */
+
+
 #endif
 
