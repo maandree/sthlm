@@ -1,0 +1,58 @@
+GNU C coding style is used.
+
+All structures are typdef:ed with a ‘_t’ suffix.
+
+Unknown constants are wrapped with the
+  identity macro function ‘BLACK_MAGIC’.
+
+Conditions for likely branches are wrapped
+  with the identity macro function ‘likely’.
+
+Conditions for unlikely branches are wrapped
+  with the identity macro function ‘unlikely’.
+
+‘float’, ‘double’ and ‘long double’ is not
+  allowed in kernel code.
+
+Kernel code is compiled with the preprocessor
+  definition ‘_KERNEL_’.
+
+Inclusion guards are formated ‘{PROJECT}_{FILE}_H’,
+  {PROJECT} is ‘KERNEL’ for kernel code.
+
+-Wpedantic may sometimes be ignored, but pragmas
+  must disable them if ignored where and only where
+  it is ignored..
+
+__attribute__((packed)) must be used if a structure
+  must be packed, even if it is packed without it.
+  Pragmas should disable the working.
+
+Pragmas must be used disable invalid warnings.
+
+Valid warnings must not be ignored unless stated so
+  in this document.
+
+Tab should be used and is 8 spaced,
+  indention is 2 spaces.
+
+Use of ‘volatile’ and ‘__attribute__((constructor))’
+  must be justified with comment.
+
+The Javadoc format is used for documentation.
+
+A variable named ‘_’ or starting with ‘_’ indicates
+  that the value is discard.
+
+A help function for another function, or help variable
+  for another variable is named with an appending ‘_’.
+
+Local macros are named with a prepending ‘__’, and if
+  and only if they are functions they are in lower case.
+  Macros are local if that are defined in architecture
+  dependent files to be used in the corresponding
+  architecture independent file.
+
+All file local macros must be undefined when they are
+  not used anymore.
+
