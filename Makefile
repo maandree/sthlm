@@ -222,7 +222,7 @@ obj/%: src/%.gpp
 .PHONY: qemu
 qemu: all
 	@$(ECHO_E) "\e[01;32m$@\e[21m: $^\e[00m"
-	qemu-system-$(QEMU_ARCH) $(QEMU_FLAGS) -kernel bin/kernel
+	$(R) qemu-system-$(QEMU_ARCH) $(QEMU_FLAGS) -kernel bin/kernel
 
 
 # Clean the directory from compiled files.
