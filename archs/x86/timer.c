@@ -48,17 +48,10 @@ void timer_initialise(void)
 }
 
 
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wsuggest-attribute=const"
-# pragma GCC diagnostic ignored "-Wsuggest-attribute=pure"
-/* Calls to function must never be optimised away.  */
-
 void timer_wait(int ticks)
 {
   int end_tick = timer_ticks + ticks;
   while (timer_ticks < end_tick)
     ; /* TODO: How do we relax the CPU? */
 }
-
-# pragma GCC diagnostic pop
 
