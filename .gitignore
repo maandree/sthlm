@@ -1,6 +1,6 @@
 _/
-bin/
-obj/
+/*/bin/
+/*/obj/
 \#*\#
 .*
 !.git*
@@ -12,5 +12,5 @@ obj/
 *.gch
 *.su
 *.out
-/src/arch
+/*/src/arch
 
