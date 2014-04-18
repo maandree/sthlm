@@ -23,7 +23,7 @@
 /**
  * Our tick count
  */
-static volatile unsigned int timer_ticks = 0;
+static volatile uint_fast32_t timer_ticks = 0;
 /* Volatile so that checking this variable
    is not optimised away. Which would be an
    incorrect optimisation. */
@@ -73,10 +73,10 @@ void timer_phase(int hertz)
 /**
  * Wait a selected number of timer tick
  */
-void timer_wait(unsigned int ticks)
+void timer_wait(uint_fast32_t ticks)
 {
-  unsigned int cur_tick = timer_ticks;
-  unsigned int end_tick = cur_tick + ticks;
+  uint_fast32_t cur_tick = timer_ticks;
+  uint_fast32_t end_tick = cur_tick + ticks;
   
   /* Handle overflow at the 2147483648:th
      (slightly below 25 days at 1000 hz) tick! */

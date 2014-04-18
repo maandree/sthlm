@@ -20,6 +20,8 @@
 
 #include "../system.h"
 
+#include <stdint.h>
+
 
 /**
  * The programmable interrupt timer interrupt IRQ number
@@ -52,7 +54,7 @@ void timer_phase(int hertz);
 /**
  * Wait a selected number of timer tick
  */
-void timer_wait(unsigned int ticks);
+void timer_wait(uint_fast32_t ticks);
 
 
 #endif
