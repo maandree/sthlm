@@ -34,7 +34,7 @@
 /**
  * Dividend for data to set timer tick frequency
  */
-#define TIMER_PHASE_DIVIDEND  0x36
+#define TIMER_PHASE_DIVIDEND  1193180
 
 
 /**
