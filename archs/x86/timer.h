@@ -52,7 +52,7 @@ void timer_phase(int hertz);
 /**
  * Wait a selected number of timer tick
  */
-void timer_wait(int ticks);
+void timer_wait(unsigned int ticks);
 
 
 #endif

@@ -23,7 +23,7 @@
 /**
  * Our tick count
  */
-static volatile int timer_ticks = 0;
+static volatile unsigned int timer_ticks = 0;
 /* Volatile so that checking this variable
    is not optimised away. Which would be an
    incorrect optimisation. */
@@ -62,6 +62,8 @@ void timer_initialise(void)
 void timer_phase(int hertz)
 {
   int data = TIMER_PHASE_DIVIDEND / hertz;
+  if (unlikely(data > 0xFFFF))
+    data = 0xFFFF;
   portputc(BLACK_MAGIC(0x43), TIMER_PHASE_COMMAND);
   portputc(BLACK_MAGIC(0x40), (unsigned char)(data & 0xFF));
   portputc(BLACK_MAGIC(0x40), (unsigned char)(data >> 8));
@@ -71,10 +73,17 @@ void timer_phase(int hertz)
 /**
  * Wait a selected number of timer tick
  */
-void timer_wait(int ticks)
+void timer_wait(unsigned int ticks)
 {
-  /* TODO: overflow at the 2147483648:th (slightly below 25 days at 1000 hz) tick! */
-  int end_tick = timer_ticks + ticks;
+  unsigned int cur_tick = timer_ticks;
+  unsigned int end_tick = cur_tick + ticks;
+  
+  /* Handle overflow at the 2147483648:th
+     (slightly below 25 days at 1000 hz) tick! */
+  if (unlikely(end_tick < cur_tick))
+    while (timer_ticks >= cur_tick)
+      relax();
+  
   while (timer_ticks < end_tick)
     relax();
 }
