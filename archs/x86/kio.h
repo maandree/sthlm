@@ -19,6 +19,27 @@
 
 
 /**
+ * Master programmable interrupt controller command port
+ */
+#define PIC_MASTER_COMMAND  0x20
+
+/**
+ * Master programmable interrupt controller data port
+ */
+#define PIC_MASTER_DATA     0x21
+
+/**
+ * Slave programmable interrupt controller command port
+ */
+#define PIC_SLAVE_COMMAND   0xA0
+
+/**
+ * Slave programmable interrupt controller data port
+ */
+#define PIC_SLAVE_DATA      0xA1
+
+
+/**
  * Read byte from a port
  * 
  * @param   port  The port

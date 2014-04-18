@@ -21,8 +21,37 @@
 #include "../system.h"
 
 
-void timer_phase(int hertz);
+/**
+ * The programmable interrupt timer interrupt IRQ number
+ */
+#define IRQ_TIMER  0
+
+/**
+ * Command number to send timer tick frequency
+ */
+#define TIMER_PHASE_COMMAND  0x36
+
+/**
+ * Dividend for data to set timer tick frequency
+ */
+#define TIMER_PHASE_DIVIDEND  0x36
+
+
+/**
+ * Initialise the timer
+ */
 void timer_initialise(void);
+
+/**
+ * Set how often the timer ticks
+ * 
+ * @parma  hertz  The number of ticks per second
+ */
+void timer_phase(int hertz);
+
+/**
+ * Wait a selected number of timer tick
+ */
 void timer_wait(int ticks);
 
 

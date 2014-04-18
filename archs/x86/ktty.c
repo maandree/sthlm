@@ -56,10 +56,10 @@ void kttymove(long dest_y, long dest_x, long src_y, long src_x, long n)
   long i;
   
   n *= 2;
-  if (dest < src)
+  if (likely(dest < src))
     for (i = 0; i < n; i++)
       *(vidptr + dest + i) = *(vidptr + src + i);
-  else if (dest > src)
+  else if (unlikely(dest > src))
     for (i = n - 1; i >= 0; i--)
       *(vidptr + dest + i) = *(vidptr + src + i);
 }

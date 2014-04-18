@@ -17,11 +17,10 @@
 #include "idt.h"
 
 
-
 /**
  * IDT gates
  */
-static idt_entry_t idt[256];
+static idt_entry_t idt[IDT_COUNT];
 
 /**
  * Select IDT gate
@@ -36,17 +35,16 @@ idt_ptr_t idtp;
 void idt_initialise(void)
 {
   char* idt_ = (char*)&idt;
-  long int i, n = sizeof(idt_entry_t) * 256;
+  long int i, n = sizeof(idt_entry_t) * IDT_COUNT;
   
   for (i = 0; i < n; i++)
     *(idt_ + i) = 0;
   
-  idtp.limit = (unsigned short int)(n - 1);
+  idtp.limit = (unsigned short int)(n - BLACK_MAGIC(1));
   idtp.handler = (uintptr_t)&idt;
   
   idt_load();
 }
-
 
 
 /**
@@ -64,7 +62,7 @@ void idt_set_gate(unsigned char index, idt_handler_t* handler,
   idt[index].handler_low = __select_half(handler, 0);
   idt[index].select = select;
   idt[index].zero = 0;
-  idt[index].flags = flags | 0x60;
+  idt[index].flags = flags | BLACK_MAGIC(0x60);
   idt[index].handler_high = __select_half(handler, 16);
   
   #undef __select_half

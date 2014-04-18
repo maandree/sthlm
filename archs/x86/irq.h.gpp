@@ -39,7 +39,7 @@
 /**
  * Do not act upon the interruption
  */
-#define IRQ_IGN  0
+#define IRQ_IGN  0 /* NULL */
 
 
 /**

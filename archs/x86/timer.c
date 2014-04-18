@@ -20,10 +20,22 @@
 #include "irq.h"
 
 
-
+/**
+ * Our tick count
+ */
 static volatile int timer_ticks = 0;
+/* Volatile so that checking this variable
+   is not optimised away. Which would be an
+   incorrect optimisation. */
 
 
+
+/**
+ * Our tick counter tht is invoked when
+ * the timer interrupts us
+ * 
+ * @param  regs  The registers
+ */
 static void timer_handler(registers_t* regs)
 {
   (void) regs;
@@ -32,24 +44,36 @@ static void timer_handler(registers_t* regs)
 }
 
 
-void timer_phase(int hertz)
-{
-  int divisor = 1193180 / hertz;
-  portputc(0x43, 0x36);
-  portputc(0x40, (unsigned char)(divisor & 0xFF));
-  portputc(0x40, (unsigned char)(divisor >> 8));
-}
-
-
+/**
+ * Initialise the timer
+ */
 void timer_initialise(void)
 {
   asm volatile("sti");
-  irq(0, timer_handler);
+  irq(IRQ_TIMER, timer_handler);
 }
 
 
+/**
+ * Set how often the timer ticks
+ * 
+ * @parma  hertz  The number of ticks per second
+ */
+void timer_phase(int hertz)
+{
+  int data = TIMER_PHASE_DIVIDEND / hertz;
+  portputc(BLACK_MAGIC(0x43), TIMER_PHASE_COMMAND);
+  portputc(BLACK_MAGIC(0x40), (unsigned char)(data & 0xFF));
+  portputc(BLACK_MAGIC(0x40), (unsigned char)(data >> 8));
+}
+
+
+/**
+ * Wait a selected number of timer tick
+ */
 void timer_wait(int ticks)
 {
+  /* TODO: overflow at the 2147483648:th (slightly below 25 days at 1000 hz) tick! */
   int end_tick = timer_ticks + ticks;
   while (timer_ticks < end_tick)
     ; /* TODO: How do we relax the CPU? */

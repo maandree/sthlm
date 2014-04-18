@@ -75,7 +75,7 @@ static const char* itostr(char* buffer, size_t size, signed int value)
   /* Use `utostr` to convert any non-negative integer,
      it is possible because all non-negative signed integers
      fits in unsigned integers. */
-  if (value >= 0)
+  if (likely(value >= 0))
     return utostr(buffer, size, (unsigned int)value);
   
   /* Use `utostr` to convert to string, this preferable because
@@ -126,7 +126,9 @@ int vasnprintf(char* out, size_t size, const char* format, va_list args)
   size_t out_skip = 0;
   char* out_end = out + (size - 1);
   char symbol;
-  
+
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wpedantic"
   /**
    * Print a symbol to the the buffer
    * 
@@ -135,10 +137,11 @@ int vasnprintf(char* out, size_t size, const char* format, va_list args)
    */
   inline int vasnprintf_(int c)
   {
+# pragma GCC diagnostic pop
     if (out_skip > 0)
       /* Skipping some printing. */
       out_skip--;
-    else if (out == out_end)
+    else if (unlikely(out == out_end))
       {
 	/* We have no space for anything more. */
 	*out = '\0';
@@ -155,16 +158,16 @@ int vasnprintf(char* out, size_t size, const char* format, va_list args)
   for (;;)
     {
       /* Get next symbol or symbol from template. */
-      if (print_this == NULL)
+      if (unlikely(print_this == NULL))
 	{
 	  /* Normal printing, from template. */
-	  if ((symbol = *format++) == '\0')
+	  if (unlikely((symbol = *format++) == '\0'))
 	    /* End of template. */
 	    break;
 	}
       else
 	/* Printing from string spitt out from the template. */
-	if ((symbol = *print_this++) == '\0')
+	if (unlikely((symbol = *print_this++) == '\0'))
 	  {
 	    /* End of the temporary string, return to template. */
 	    print_this = NULL;
@@ -172,7 +175,7 @@ int vasnprintf(char* out, size_t size, const char* format, va_list args)
 	  }
       
       /* Parse symbol. */
-      if ((symbol == '%') && (print_this == NULL))
+      if ((unlikely(symbol == '%')) && (print_this == NULL))
 	{
 	  /* Parse escape if not in temporary string. */
 	  symbol = *format++;
@@ -205,7 +208,7 @@ int vasnprintf(char* out, size_t size, const char* format, va_list args)
 	      
 	    case 'c':
 	      /* Print a string single character. */
-	      if (vasnprintf_((char)va_arg(args, int /* (!) */)))
+	      if (unlikely(vasnprintf_((char)va_arg(args, int /* (!) */))))
 		return 1;
 	      break;
 	      
@@ -228,7 +231,7 @@ int vasnprintf(char* out, size_t size, const char* format, va_list args)
 	}
       else
 	/* Just a number symbol, nothing special. */
-	if (vasnprintf_(symbol))
+	if (unlikely(vasnprintf_(symbol)))
 	  return 1;
     }
   

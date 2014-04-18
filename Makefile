@@ -74,7 +74,7 @@ endif
 OPTIMISE = -O2
 
 # Enabled Warnings.
-WARN = -Wall -Wextra -Wdouble-promotion -Wformat=2 -Winit-self                 \
+WARN = -Wall -Wextra -pedantic -Wdouble-promotion -Wformat=2 -Winit-self       \
        -Wmissing-include-dirs -Wtrampolines -Wfloat-equal -Wshadow             \
        -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls           \
        -Wnested-externs -Winline -Wno-variadic-macros -Wsign-conversion        \
@@ -85,7 +85,6 @@ WARN = -Wall -Wextra -Wdouble-promotion -Wformat=2 -Winit-self                 \
        -Wvector-operation-performance -Wunsuffixed-float-constants             \
        -Wsuggest-attribute=const -Wsuggest-attribute=noreturn                  \
        -Wsuggest-attribute=pure -Wsuggest-attribute=format -Wnormalized=nfkc
-# not using:  -pedantic
 
 # The C standard used in the code.
 STD = gnu99
@@ -99,7 +98,7 @@ LD_FLAGS = -nodefaultlibs -nostdlib -m$(LD_FORMAT)
 
 # Options for the C preprocessor.
 # We define _KERNEL_ for good practive.
-CPP_FLAGS = -D_KERNEL_
+CPP_FLAGS = -D_KERNEL_ -DBLACK_MAGIC= -Dlikely= -Dunlikely=
 
 # Options for the C compiler.
 C_FLAGS = $(OPTIMISE) $(WARN) -m$(MACHINE) -std=$(STD) -nostdlib -nodefaultlibs  \

@@ -42,6 +42,12 @@
 #define DEFAULT_FOREGROUND  7 /* Dim white. */
 
 
+/**
+ * Bit to set to make a colour brighter
+ */
+#define BRILLIANT  8
+
+
 
 /**
  * The current position of the cursor, line
@@ -105,26 +111,31 @@ static void set_colour(int entry)
       /* Background reset. */
       attribute_background = DEFAULT_BACKGROUND;
       break;
+
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wpedantic"
       
     case 30 ... 37:
       /* Dim foreground */
-      attribute_foreground = entry_colour | 0;
+      attribute_foreground = entry_colour;
       break;
       
     case 40 ... 47:
       /* Dim background */
-      attribute_background = entry_colour | 0;
+      attribute_background = entry_colour;
       break;
       
     case 90 ... 97:
       /* Brilliant foreground */
-      attribute_foreground = entry_colour | 8;
+      attribute_foreground = entry_colour | BRILLIANT;
       break;
       
     case 100 ... 107:
       /* Brilliant background */
-      attribute_background = entry_colour | 8;
+      attribute_background = entry_colour | BRILLIANT;
       break;
+
+# pragma GCC diagnostic pop
       
     default:
       /* Not recognised, lets ignore it. */
