@@ -21,7 +21,7 @@ KARCH = x86
 # Programs to use.
 CC = gcc
 LD = ld
-ASM = nasm
+AS = nasm
 RM = rm
 RM_R = $(RM) -r
 RM_F = $(RM) -f
@@ -48,9 +48,9 @@ R = @util/red "$(ECHO_E)"
 
 
 # Output format for the directly used assembler.
-ifeq ($(ASM_FORMAT),)
+ifeq ($(AS_FORMAT),)
 ifeq ($(KARCH),x86)
-ASM_FORMAT = elf32
+AS_FORMAT = elf32
 endif
 endif
 
@@ -91,7 +91,7 @@ STD = gnu99
 
 
 # Options for the assembler when compiling assembly directly.
-ASM_FLAGS = -f$(ASM_FORMAT)
+AS_FLAGS = -f$(AS_FORMAT)
 
 # Options for the linker.
 LD_FLAGS = -nodefaultlibs -nostdlib -m$(LD_FORMAT)
@@ -159,7 +159,7 @@ all: _makeflags
 
 
 # Rebuild when flags are changed.
-_MAKEFLAGS_GROUPS = ASM_FLAGS LD_FLAGS CPP_FLAGS C_FLAGS GPP_FLAGS C_DISALLOW SUM
+_MAKEFLAGS_GROUPS = AS_FLAGS LD_FLAGS CPP_FLAGS C_FLAGS GPP_FLAGS C_DISALLOW SUM
 _MAKEFLAGS = $(foreach G,$(_MAKEFLAGS_GROUPS),$(foreach F,$($(G)),$(G)=$(subst /,\\,$(F))))
 _MAKEFLAGS_SUM = $(shell for F in $(_MAKEFLAGS); do echo $$F; done | $(SORT) | $(SUM) | $(CUT) -d ' ' -f 1)
 .PHONY: _makeflags
@@ -191,13 +191,13 @@ bin/kernel: link.ld $(foreach O,$(OBJECTS),obj/$(O).o) # $link.ld must be first
 obj/%.o: src/%.S
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
 	$(R) $(MKDIR_P) $(shell $(DIRNAME) $@)
-	$(R) $(RED) $(ASM) $(ASM_FLAGS) -o $@ $<
+	$(R) $(AS) $(AS_FLAGS) -o $@ $<
 
 # Compile a generated assembly file.
 obj/%.o: obj/%.S
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
 	$(R) $(MKDIR_P) $(shell $(DIRNAME) $@)
-	$(R) $(ASM) $(ASM_FLAGS) -o $@ $<
+	$(R) $(AS) $(AS_FLAGS) -o $@ $<
 
 # Compile a C file, recompile all (for simplicity) if a header is modified.
 obj/%.o: src/%.c $(foreach H,$(HEADERS),src/$(H).h) $(foreach H,$(GEN_HEADERS),obj/$(H).h)
