@@ -1,0 +1,22 @@
+These instructions are for x86 master boot record (MBR).
+
+To test the boot manager create a QEMU machine that boot
+into a bootloader (you know, that graphical program from
+which to select kernel too boot; the boot manager boots
+the bootloader.)
+
+The machine's disc image must use raw formatting, otherwise
+the following steps will not work as they should.
+
+So that the makefile will work, the disc should be located
+in the directory ‘.machine’ and should be named ‘disc.raw’.
+You may want to create a backup:
+
+    cp disc.raw backup.raw
+
+
+To install a new boot manager to ‘disc.raw’ run:
+
+    dd if=YOUR_MBR_FILE_OR_DISC of=disc.raw \
+       bs=440 count=1 conv=notrunc
+
