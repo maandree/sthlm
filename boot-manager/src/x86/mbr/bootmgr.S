@@ -59,7 +59,8 @@ next_partition:
 
 found_partition:
 	mov ebx, ecx		; Save found partition.
- 	jmp last_partition	; Try the next one too, we want the last partition.
+ 	jmp next_partition	; Try the next one too, we want the last partition.
+	;; Change this to `jmp last_partition` to load the first partition.
 
 last_partition:
 	cmp ebx, -1		; Check if we have found a bootable partition.
