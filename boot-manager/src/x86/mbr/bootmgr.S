@@ -32,7 +32,7 @@ bootsec:
 				; Like... really common. It has no effect...
 	
 	cli			; Disable interrupts.
-
+	
 	mov ecx, (0 - 1)	; Start at first partition.
 				; However, we do an increment at the beginning,
 				; so we start at -1 rather than 0.
@@ -46,12 +46,13 @@ next_partition:
 	
 	mov edx, ecx		; Calculates the partition entires position,
 	imul edx, 16		; they are 16 byte long,
-	add edx, 446		; and start 446.
+	add edx, 446		; and start 446. (Hopefully you see why it is
+				; ludicrous to have this program 512 byte long.)
 				; Their 8:th bit of their first byte specify
 				; whether they are bootable.
 	add edx, MBR		; Do not forget that MBR offset,
 				; that is, where it is mapped in memory.
-
+	
 	mov edx, [edx]		; Read the first byte.
 	and edx, 0x80		; And check the 8:th byte (boot flag.)
 	jnz found_partition	; If the bit is set, we have found a partition.
@@ -83,6 +84,7 @@ die:
 	int 0x10		; Perform print.
 	jne .print_loop		; Print next
 	hlt			;  or halt.
+	jmp ($ - 1)		; Rehalt forever.
 
 
 ;; Messages that can be printed.
