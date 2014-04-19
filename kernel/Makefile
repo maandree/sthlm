@@ -188,13 +188,13 @@ bin/kernel: link.ld $(foreach O,$(OBJECTS),obj/$(O).o) # $link.ld must be first
 	$(R) $(LD) $(LD_FLAGS) -o $@ -T $^
 
 # Compile an assembly file.
-obj/%.o: src/%.asm
+obj/%.o: src/%.S
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
 	$(R) $(MKDIR_P) $(shell $(DIRNAME) $@)
 	$(R) $(RED) $(ASM) $(ASM_FLAGS) -o $@ $<
 
 # Compile a generated assembly file.
-obj/%.o: obj/%.asm
+obj/%.o: obj/%.S
 	@$(ECHO_E) "\e[01;34m$@\e[21m: $^\e[00m"
 	$(R) $(MKDIR_P) $(shell $(DIRNAME) $@)
 	$(R) $(ASM) $(ASM_FLAGS) -o $@ $<
