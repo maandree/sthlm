@@ -1,0 +1,18 @@
+A boot manager is a (really) tiny program that is installed
+to the beginning of a disc. Its mission in life is to find
+a bootable partition and boot it. The bootable partition
+normally contain a bootloader, but could also contain another
+boot manager or a kernel.
+
+Since booting logical partitions is ridiculous, bootmanagers
+in this project will only be able to boot primary and extended
+partitions.
+
+Additionally, it should be possible to compile to either boot
+the first bootable partition or the last bootable partition.
+Normally partitioners will only let you have one bootable
+partition but you can actually flag all your partitions
+(including the logical once that we do not boot) to be bootable,
+which is (combined with booting the last bootable partition) a
+great trick to do boot sequence hacks.
+
