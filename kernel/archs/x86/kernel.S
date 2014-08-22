@@ -42,6 +42,13 @@ start:
 	cli				; Block interrupts.
 	call idt_initialise		; Initialise IDT support.
 	call irq_initialise		; Initialise IRQ support.
+
+	mov eax, cr0			; Unlease the power! ... of protected mode.
+	or eax, 1
+	mov cr0,eax
+	jmp 08h:start_
+	
+start_:
 	call kmane			; Call the kmane function.
 	hlt				; Halt the CPU.
 
