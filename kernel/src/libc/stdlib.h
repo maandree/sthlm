@@ -23,12 +23,6 @@
 
 
 /**
- * NULL-pointer
- */
-#define NULL  ((void*)0)
-
-
-/**
  * Format an print a string into memory
  * 
  * @param   out     Location to print the string to

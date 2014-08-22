@@ -37,5 +37,11 @@ typedef uintptr_t size_t;
 typedef intptr_t ssize_t;
 
 
+/**
+ * NULL-pointer
+ */
+#define NULL  ((void*)0)
+
+
 #endif
 
