@@ -37,8 +37,8 @@ typedef void idt_handler_t(registers_t* regs);
 
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wpacked"
-/* Pack it explicitly despite we compile say it is not
-   unnecessary (already packed). It most be packed. */
+/* Pack it explicitly despite the compiler saying it is
+   not unnecessary (already packed). It most be packed. */
 
 /**
  * IDT gate entry
@@ -61,6 +61,7 @@ typedef struct idt_entry
    * The upper half of the address to the handler
    */
   unsigned short int handler_high;
+  
 } __attribute__((packed)) idt_entry_t;
 
 # pragma GCC diagnostic pop
@@ -80,6 +81,7 @@ typedef struct idt_ptr
    * Address to the handler
    */
   uintptr_t handler;
+  
 } __attribute__((packed)) idt_ptr_t;
 
 
