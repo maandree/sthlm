@@ -18,6 +18,13 @@
 #define KERNEL_SYSTEM_H
 
 
+/*
+ * This module is responsible for providing CPU
+ * capabilities that is not provided bt the C
+ * programming language.
+ */
+
+
 #include "arch/system.h"
 
 

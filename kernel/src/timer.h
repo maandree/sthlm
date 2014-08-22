@@ -18,6 +18,11 @@
 #define KERNEL_TIMER_H
 
 
+/*
+ * This module implements a timer, nothing more.
+ */
+
+
 #include "arch/timer.h"
 
 

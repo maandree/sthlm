@@ -18,6 +18,13 @@
 #include "timer.h"
 
 
+/*
+ * The module is responsible for the process flow of the kernel.
+ * arch/kernel.S is however the canonical starting point of the
+ * kernel's process flow.
+ */
+
+
 /**
  * This is the entry point of the kernel,
  * although there is actually stuff in

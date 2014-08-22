@@ -18,6 +18,11 @@
 #define KERNEL_ARCH_IDT_H
 
 
+/*
+ * Basically: http://wiki.osdev.org/IDT
+ */
+
+
 #include "../system.h"
 
 #include <stdint.h>

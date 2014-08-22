@@ -18,7 +18,31 @@
 #define KERNEL_LIBC_MACROS_H
 
 
+/*
+ * Common macros
+ */
+
+
+/**
+ * The expression is likely to evaluate to `1`
+ * 
+ * This macro provides hits for the compiler
+ * for optimisation of branching
+ * 
+ * @param   EXPRESSION:int  The expression
+ * @return  :int            `EXPRESSION` is returned without any modifications
+ */
 #define likely(EXPRESSION)  __builtin_expect(EXPRESSION, 1)
+
+/**
+ * The expression is likely to evaluate to `0`
+ * 
+ * This macro provides hits for the compiler
+ * for optimisation of branching
+ * 
+ * @param   EXPRESSION:int  The expression
+ * @return  :int            `EXPRESSION` is returned without any modifications
+ */
 #define unlikely(EXPRESSION)  __builtin_expect(EXPRESSION, 0)
 
 

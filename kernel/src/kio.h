@@ -18,6 +18,12 @@
 #define KERNEL_KIO_H
 
 
+/*
+ * The module is responsible for providing BIOS
+ * port communication capabilities.
+ */
+
+
 #include "arch/kio.h"
 
 

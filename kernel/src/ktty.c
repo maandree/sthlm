@@ -273,7 +273,7 @@ void kputs(const char* str)
  * @param   format  The format template to use
  * @param   ...     Input data to fill the template with
  * @return          Zero if and only if everything was printed, otherwise
- *                  the output was truncated with an utimate length of `size`
+ *                  the output was truncated with an ultimate length of `size`
  */
 int kprintf(const char* format, ...)
 {
@@ -292,7 +292,7 @@ int kprintf(const char* format, ...)
  * @param   format  The format template to use
  * @param   args    Input data to fill the template with
  * @return          Zero if and only if everything was printed, otherwise
- *                  the output was truncated with an utimate length of `size`
+ *                  the output was truncated with an ultimate length of `size`
  */
 int kvaprintf(const char* format, va_list args)
 {

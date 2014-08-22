@@ -18,6 +18,12 @@
 #define KERNEL_KTTY_H
 
 
+/*
+ * This module is responsible for providing basic text output
+ * capabilities for the kernel for debugging and panic purposes.
+ */
+
+
 #include "arch/ktty.h"
 #include <stdarg.h> /* built in */
 
@@ -44,7 +50,7 @@ void kputs(const char* str);
  * @param   ...     Input data with which to fill the template
  * @return          Zero if and only if everything was printed,
  *                  otherwise the output was truncated with an
- *                  utimate length of `KPRINT_BUFFER_SIZE`
+ *                  ultimate length of `KPRINT_BUFFER_SIZE`
  */
 int kprintf(const char* format, ...);
 
@@ -55,7 +61,7 @@ int kprintf(const char* format, ...);
  * @param   args    Input data with which to fill the template
  * @return          Zero if and only if everything was printed,
  *                  otherwise the output was truncated with an
- *                  utimate length of `KPRINT_BUFFER_SIZE`
+ *                  ultimate length of `KPRINT_BUFFER_SIZE`
  */
 int kvaprintf(const char* format, va_list args);
 

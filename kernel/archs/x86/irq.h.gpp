@@ -19,6 +19,11 @@
 #define KERNEL_ARCH_IRQ_H
 
 
+/*
+ * Basically: http://wiki.osdev.org/IRQ
+ */
+
+
 #include "idt.h"
 
 
