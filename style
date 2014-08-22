@@ -26,7 +26,7 @@ Inclusion guards are formated ‘{PROJECT}_{FILE}_H’,
 
 __attribute__((packed)) must be used if a structure
   must be packed, even if it is packed without it.
-  Pragmas should disable the working.
+  Pragmas should disable the warning.
 
 Pragmas must be used disable invalid warnings.
 
