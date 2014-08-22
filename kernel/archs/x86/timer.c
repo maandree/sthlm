@@ -19,6 +19,8 @@
 #include "kio.h"
 #include "irq.h"
 
+#include <macros.h>
+
 
 /**
  * Our tick count

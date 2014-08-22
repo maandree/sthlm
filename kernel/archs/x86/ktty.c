@@ -16,6 +16,8 @@
  */
 #include "ktty.h"
 
+#include <macros.h>
+
 
 /**
  * The beginning of the memory where the output is written

@@ -98,7 +98,7 @@ LD_FLAGS = -nodefaultlibs -nostdlib -m$(LD_FORMAT)
 
 # Options for the C preprocessor.
 # We define _KERNEL_ for good practive.
-CPP_FLAGS = -D_KERNEL_ -DBLACK_MAGIC= -Dlikely= -Dunlikely=
+CPP_FLAGS = -D_KERNEL_ -DBLACK_MAGIC=
 
 # Options for the C compiler.
 C_FLAGS = $(OPTIMISE) $(WARN) -m$(MACHINE) -std=$(STD) -nostdlib -nodefaultlibs  \
@@ -127,7 +127,7 @@ OBJECTS = arch/kernel kernel arch/irq_asm arch/idt_asm $(NORMALS) $(GEN_NORMALS)
 
 # C header files.
 HEADERS = $(NORMALS) libc/stdint libc/inttypes libc/stddef arch/libc/stdint  \
-          arch/libc/inttypes kio system timer arch/system
+          arch/libc/inttypes kio system timer arch/system libc/macros
 
 # Generated C header files.
 GEN_HEADERS = $(GEN_NORMALS)

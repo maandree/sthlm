@@ -132,19 +132,19 @@
 
 /* Printing {{,u,x}{intmax,intptr},{,s}size,ptrdiff}_t. */
 
-#define PRIdMAX	__PRIMAX_PREFIX "d"
-#define PRIiMAX	__PRIMAX_PREFIX "i"
-#define PRIoMAX	__PRIMAX_PREFIX "o"
-#define PRIuMAX	__PRIMAX_PREFIX "u"
-#define PRIxMAX	__PRIMAX_PREFIX "x"
-#define PRIXMAX	__PRIMAX_PREFIX "X"
+#define PRIdMAX		__PRIMAX_PREFIX "d"
+#define PRIiMAX		__PRIMAX_PREFIX "i"
+#define PRIoMAX		__PRIMAX_PREFIX "o"
+#define PRIuMAX		__PRIMAX_PREFIX "u"
+#define PRIxMAX		__PRIMAX_PREFIX "x"
+#define PRIXMAX		__PRIMAX_PREFIX "X"
 
-#define PRIdPTR	__PRIPTR_PREFIX "d"
-#define PRIiPTR	__PRIPTR_PREFIX "i"
-#define PRIoPTR	__PRIPTR_PREFIX "o"
-#define PRIuPTR	__PRIPTR_PREFIX "u"
-#define PRIxPTR	__PRIPTR_PREFIX "x"
-#define PRIXPTR	__PRIPTR_PREFIX "X"
+#define PRIdPTR		__PRIPTR_PREFIX "d"
+#define PRIiPTR		__PRIPTR_PREFIX "i"
+#define PRIoPTR		__PRIPTR_PREFIX "o"
+#define PRIuPTR		__PRIPTR_PREFIX "u"
+#define PRIxPTR		__PRIPTR_PREFIX "x"
+#define PRIXPTR		__PRIPTR_PREFIX "X"
 
 #define PRIdSIZE	__PRISIZE_PREFIX "d"
 #define PRIiSIZE	__PRISIZE_PREFIX "i"
@@ -272,19 +272,19 @@
 
 /* Scanning for {{,u,x}{intmax,intptr},{,s}size,ptrdiff}_t. */
 
-#define SCNdMAX	__SCNMAX_PREFIX "d"
-#define SCNiMAX	__SCNMAX_PREFIX "i"
-#define SCNoMAX	__SCNMAX_PREFIX "o"
-#define SCNuMAX	__SCNMAX_PREFIX "u"
-#define SCNxMAX	__SCNMAX_PREFIX "x"
-#define SCNXMAX	__SCNMAX_PREFIX "X"
+#define SCNdMAX		__SCNMAX_PREFIX "d"
+#define SCNiMAX		__SCNMAX_PREFIX "i"
+#define SCNoMAX		__SCNMAX_PREFIX "o"
+#define SCNuMAX		__SCNMAX_PREFIX "u"
+#define SCNxMAX		__SCNMAX_PREFIX "x"
+#define SCNXMAX		__SCNMAX_PREFIX "X"
 
-#define SCNdPTR	__SCNPTR_PREFIX "d"
-#define SCNiPTR	__SCNPTR_PREFIX "i"
-#define SCNoPTR	__SCNPTR_PREFIX "o"
-#define SCNuPTR	__SCNPTR_PREFIX "u"
-#define SCNxPTR	__SCNPTR_PREFIX "x"
-#define SCNXPTR	__SCNPTR_PREFIX "X"
+#define SCNdPTR		__SCNPTR_PREFIX "d"
+#define SCNiPTR		__SCNPTR_PREFIX "i"
+#define SCNoPTR		__SCNPTR_PREFIX "o"
+#define SCNuPTR		__SCNPTR_PREFIX "u"
+#define SCNxPTR		__SCNPTR_PREFIX "x"
+#define SCNXPTR		__SCNPTR_PREFIX "X"
 
 #define SCNdSIZE	__SCNSIZE_PREFIX "d"
 #define SCNiSIZE	__SCNSIZE_PREFIX "i"

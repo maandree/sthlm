@@ -16,6 +16,8 @@
  */
 #include "stdlib.h"
 
+#include <macros.h>
+
 
 /**
  * Convert an unsigned integer to a string
@@ -133,7 +135,7 @@ int vasnprintf(char* out, size_t size, const char* format, va_list args)
    * Print a symbol to the the buffer
    * 
    * @param   c  The symbol to print
-   * @return     Zero if and only if everything the symbol could be printed
+   * @return     Zero if and only if the symbol could be printed
    */
   inline int vasnprintf_(int c)
   {
