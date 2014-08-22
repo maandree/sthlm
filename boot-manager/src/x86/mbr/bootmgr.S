@@ -18,6 +18,15 @@ bits 16				; 16 bits (explicitly.)
 
 MBR equ 0x7C00			; BIOS have mapped the MBR for us.
 
+;; BIOS have been nice enough to map some other things for us:
+DRIVE_NUMBER         equ (MBR - 6)
+SECTORS              equ (MBR - 8)
+SECTORS_PER_CYLINDER equ (MBR - 12)
+
+;; Some constants for readability
+MBR_SIZE_BYTES equ 512
+MBR_SIZE_WORDS equ (MBR_SIZE_BYTES / 2)
+
 
 ;; Macro for printing a message and halting.
 %macro DIE 1
@@ -30,8 +39,21 @@ MBR equ 0x7C00			; BIOS have mapped the MBR for us.
 bootsec:
 	db 0x33, 0xC0		; For some reason this is common practice...
 				; Like... really common. It has no effect...
+				; (This is really `xor ax, ax`, so ax will be zero.)
 	
 	cli			; Disable interrupts.
+
+
+;; Step 0: Relocate. (not working yet)
+
+	;; 	mov di, bootsec
+	;; 	mov cx, MBR_SIZE_WORDS
+	;; 	rep movsw
+	;; 	jmp word 0x0:vacate
+	;; vacate:
+
+
+;; Step 1: Find a bootable partition.
 	
 	mov ecx, (0 - 1)	; Start at first partition.
 				; However, we do an increment at the beginning,
@@ -40,8 +62,7 @@ bootsec:
 
 next_partition:
 	inc ecx			; Otherwise, check next partition.
-	mov eax, ecx		; There cannot be more than
-	and eax, 4		; four primary/extended partitions.
+	test ecx, 4		; There cannot be more than four primary/extended partitions.
  	jnz last_partition	; If we have check all...
 	
 	mov edx, ecx		; Calculates the partition entires position,
@@ -66,8 +87,25 @@ found_partition:
 last_partition:
 	cmp ebx, -1		; Check if we have found a bootable partition.
 	jpe no_bootable		; If not, report it to the user.
+
+
+;; Step 2: Locate that sucker. (not done)
+	
+	;;
+
+
+;; Step 3: Boot the partition. (not done)
+	
+	mov dl, [DRIVE_NUMBER]	; Set the dl register to the device number.
+	mov ax, 0		; Initialise segment registers to zero.
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
 	DIE MSG_OK
 
+
+;; Your disc does not have have a bootable partition (that is not logical.)
 no_bootable:
 	DIE MSG_NO_BOOT		; Print error message and die.
 
@@ -83,14 +121,13 @@ die:
 	cmp al, '.'		; Stop at (but include) a full stop.
 	int 0x10		; Perform print.
 	jne .print_loop		; Print next
-	hlt			;  or halt.
+	hlt			;  or halt.  ---  We could do `int 0x18` instead of halting.
 	jmp ($ - 1)		; Rehalt forever.
 
 
 ;; Messages that can be printed.
 MSG_NO_BOOT db "No bootable partition found."
-MSG_OK db "  OK."
-MSG_BAD db "  BAD."
+MSG_OK db "OK."
 
 
 ; times 446 - ($ - $$) db 0	; Force the size of the file to be exactly
