@@ -20,6 +20,7 @@
 
 /*
  * This module implements a timer, nothing more.
+ * It is implemented for testing reasons.
  */
 
 
