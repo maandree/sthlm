@@ -1,4 +1,4 @@
-GNU C coding style is used.
+GNU C coding style is used, with some small changes.
 
 All structures are typdef:ed with a ‘_t’ suffix.
 
