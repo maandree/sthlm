@@ -26,3 +26,45 @@ I_SENDCHLD, I_RECVCHLD
 	reparented to the receiving process when these calls
 	have returned.
 
+Immortal processes
+
+	A process can set configure itself to be immortal
+	(should be done between `fork` and `exec`), which means
+	that when it dies, rather than getting reaped at
+	`wait` the parent can resurrect it, or choose to reap
+	it. For compatibility with other systems and simplicity
+	for must programs, reaping is done by default.
+	The reason for letting the process configure itself
+	as immortal rather than having the parent keep track
+	of which processes immortal is simple: if the process
+	its reparented, for instance because it parent died,
+	the new parent will know it should resurrect it unless
+	it exited with status 0. Furthermore, immortal processes
+	where automatically resurrected upon abnormal death
+	we would not be able to (nicely) implement policies
+	for reaping it if it dies too quickly too often.
+	An immortal process will appear to be alive for all
+	process but the parent, unless you snoop in /proc:
+	file descriptors are not closed, the PID is reserved
+	for the immortal process, nothing changes. Not even
+	child process will get notified.
+	
+	Rather that the signature for `main` being
+	(int argc, char* argv[], char** envp) it is
+	(int argc, char* argv[], char** envp, spawn_flags_t** flags)
+	in sthlm. Where spawn_flags_t is an integer.
+	For a resurrected process P_RESURRECTED will be set
+	in `flags`. Additionally, the parent may choose to
+	resurrect the process and urge it properly release
+	global resource and otherwise clean up after itself,
+	in this case P_CLEANUP will also be set in `flags`.
+	A process with `flags & P_CLEANUP` should not
+	continue its actions, it should only clean up after
+	itself and exit.
+	
+	Immortal processes are important for one reason:
+	kernel servers should not lose important resources
+	and should never appear to be dead or crash the
+	system by dying. But that can also be used for
+	non-kernel servers.
+
