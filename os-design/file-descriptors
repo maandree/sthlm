@@ -1,0 +1,13 @@
+nullfd
+
+	A pipe that no process can write to.
+	
+	The file descriptors can be used for example
+	for sending file descriptors (I_SENDFD,
+	I_RECVFD) or even process so that it gets
+	reparented (I_SENDCHLD, I_RECVCHLD).
+
+
+memfd
+	memfd looks like a good idea.
+

@@ -1,0 +1,9 @@
+setprpp(int set) /* set process reparenting point */
+
+	When a process dies its children should reparent to the closes
+	ancestor who has called `setprpp` and did so the last time
+	with set != 0.
+	
+	I immagine that could be useful for something, but it is mostly
+	about having a clean process tree.
+

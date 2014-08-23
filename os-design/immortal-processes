@@ -1,31 +1,3 @@
-This is a list of ideas that I ultimelty want the implement in my OS.
-
-
-SIGPARENT
-
-	Just like SIGCHLD, except reversed. When a process's parent
-	process dies the kernel will send this signal to the child.
-	This can be used to esculate death to children. The children
-	should of cause be able to get the parents exist status.
-
-setprpp(int set) /* set process reparenting point */
-
-	When a process it's children should reparent to the closes
-	ancestor who has called `setprpp` and did so the last time
-	with set != 0.
-
-I_SENDFD, I_RECVFD
-
-	I want my OS to support file descriptor passing over
-	STREAMS-based pipes.
-
-I_SENDCHLD, I_RECVCHLD
-
-	A process should be able to send a child processes to
-	another process. This means that the child process is
-	reparented to the receiving process when these calls
-	have returned.
-
 Immortal processes
 
 	A process can set configure itself to be immortal

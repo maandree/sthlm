@@ -1,0 +1,12 @@
+/proc/$$/pub
+
+	A directory associated with a process.
+	The process with the process ID $$ can
+	do anything in this directory that it
+	could do in any other normal tmpfs
+	directory. However, other process can
+	only read and execute files in this
+	directory (to the extent the files'
+	permission bits allow.) Process owned
+	by any used can access this directory.
+

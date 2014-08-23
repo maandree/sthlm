@@ -1,0 +1,28 @@
+SIGDANGER
+
+	Nothing too new. When the system is running out of memory
+	it notifies process by sending a SIGDANGER signal to them
+	in order to urge them to free up memory they are not using.
+
+
+SIGINFO
+
+	Nothing too new here either. Request that the process
+	prints its status to stderr.
+
+
+SIGUPDATE
+
+	Just like SIGUSR1 and SIGUSR2, except the default action
+	is to ignore it. Its purpose is to have standard signal
+	to send to process that should re-exec into a newer version
+	of their executable.
+
+
+SIGPARENT
+
+	Just like SIGCHLD, except reversed. When a process's parent
+	process dies this signal is raised at the child.
+	This can be used to esculate death to children. The children
+	should of cause be able to get the parents exist status.
+
