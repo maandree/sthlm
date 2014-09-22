@@ -26,3 +26,6 @@ SIGPARENT
 	This can be used to esculate death to children. The children
 	should of cause be able to get the parents exist status.
 
+	It appears that Linux can do this, but the signal is
+	configurable: `man 2 prctrl` PR_SET_PDEATHSIG, PR_GET_PDEATHSIG
+

@@ -6,4 +6,7 @@ setprpp(int set) /* set process reparenting point */
 	
 	I immagine that could be useful for something, but it is mostly
 	about having a clean process tree.
+	
+	I think valgrind uses this in Linux. It appears that Linux does
+	support this: `man 2 prctl` PR_SET_CHILD_SUBREAPER
 
