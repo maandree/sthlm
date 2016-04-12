@@ -1,9 +1,8 @@
-Spellbinding treatful hobbyists' laboratorial microkernel (Sthlm /stockholm/)
+Spellbinding treatful hobbyists' laboratorial microkernel
+(Sthlm /stockholm/)
 
 I'm trying to write a microkernel. Because, well, it's fun.
 I have choosen to write everything in C (except parts that need
 to be in assembly) because C is fun and I am^H^Hwas doing too
-little in it. That said, real projects should seldomly be
-written in C, C++ or assembly and kernels should perferably
-be written in Haskell.
+little in it.
 

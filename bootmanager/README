@@ -1,4 +1,4 @@
-A boot manager is a (really) tiny program that is installed
+A bootmanager is a (really) tiny program that is installed
 to the beginning of a disc. Its mission in life is to find
 a bootable partition and boot it. The bootable partition
 normally contain a bootloader, but could also contain another
